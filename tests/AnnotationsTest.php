@@ -20,6 +20,15 @@ class Sut
     {
 
     }
+
+    /**
+     * @Corley\Pre(targetClass="SuperClass", targetMethod="firstMethod")
+     * @Corley\Pre(targetClass="SuperClass2", targetMethod="secondMethod")
+     */
+    public function multi()
+    {
+
+    }
 }
 
 class AnnotationsTest extends \PHPUnit_Framework_TestCase
@@ -58,5 +67,19 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals("SuperClass", $annot->targetClass);
             $this->assertEquals("aMethod", $annot->targetMethod);
         }
+    }
+
+    public function testReadMultipleMethodAnnotations()
+    {
+        $reflClass = new ReflectionMethod('Corley\\Middleware\\Sut', "multi");
+        $annotations = $this->reader->getMethodAnnotations($reflClass);
+
+        $this->assertCount(2, $annotations);
+        $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Pre", $annotations[0]);
+
+        $this->assertEquals("SuperClass", $annotations[0]->targetClass);
+        $this->assertEquals("firstMethod", $annotations[0]->targetMethod);
+        $this->assertEquals("SuperClass2", $annotations[1]->targetClass);
+        $this->assertEquals("secondMethod", $annotations[1]->targetMethod);
     }
 }
