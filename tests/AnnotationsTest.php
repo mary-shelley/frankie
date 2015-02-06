@@ -9,12 +9,12 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Corley\Middleware\Annotations as Corley;
 
 /**
- * @Corley\Pre(targetClass="AnotherClass", targetMethod="hello")
+ * @Corley\Before(targetClass="AnotherClass", targetMethod="hello")
  */
 class Sut
 {
     /**
-     * @Corley\Pre(targetClass="SuperClass", targetMethod="aMethod")
+     * @Corley\Before(targetClass="SuperClass", targetMethod="aMethod")
      */
     public function method()
     {
@@ -22,8 +22,8 @@ class Sut
     }
 
     /**
-     * @Corley\Pre(targetClass="SuperClass", targetMethod="firstMethod")
-     * @Corley\Pre(targetClass="SuperClass2", targetMethod="secondMethod")
+     * @Corley\Before(targetClass="SuperClass", targetMethod="firstMethod")
+     * @Corley\Before(targetClass="SuperClass2", targetMethod="secondMethod")
      */
     public function multi()
     {
@@ -37,7 +37,7 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        AnnotationRegistry::registerFile(__DIR__ . "/../src/Annotations/Pre.php");
+        AnnotationRegistry::registerFile(__DIR__ . "/../src/Annotations/Before.php");
         $this->reader = new AnnotationReader();
     }
 
@@ -48,7 +48,7 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $annotations);
         foreach ($annotations as $annot) {
-            $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Pre", $annot);
+            $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Before", $annot);
 
             $this->assertEquals("AnotherClass", $annot->targetClass);
             $this->assertEquals("hello", $annot->targetMethod);
@@ -62,7 +62,7 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $annotations);
         foreach ($annotations as $annot) {
-            $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Pre", $annot);
+            $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Before", $annot);
 
             $this->assertEquals("SuperClass", $annot->targetClass);
             $this->assertEquals("aMethod", $annot->targetMethod);
@@ -75,7 +75,7 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
         $annotations = $this->reader->getMethodAnnotations($reflClass);
 
         $this->assertCount(2, $annotations);
-        $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Pre", $annotations[0]);
+        $this->assertInstanceOf("Corley\\Middleware\\Annotations\\Before", $annotations[0]);
 
         $this->assertEquals("SuperClass", $annotations[0]->targetClass);
         $this->assertEquals("firstMethod", $annotations[0]->targetMethod);

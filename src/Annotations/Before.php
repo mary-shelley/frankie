@@ -2,7 +2,7 @@
 namespace Corley\Middleware\Annotations;
 
 /** @Annotation */
-class Pre
+class Before
 {
     public $targetClass;
     public $targetMethod;
