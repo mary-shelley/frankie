@@ -3,34 +3,6 @@ namespace Corley\Middleware;
 
 use DI\ContainerBuilder;
 
-class MyClass {}
-class OtherClass {
-    /**
-     * @Inject
-     * @var Corley\Middleware\MyClass
-     */
-    public $myClass;
-}
-
-trait Classable
-{
-    /**
-     * @Inject
-     * @var Corley\Middleware\MyClass
-     */
-    private $myClass;
-
-    public function getMyClass()
-    {
-        return $this->myClass;
-    }
-}
-
-class OverTrait
-{
-    use Classable;
-}
-
 class DicTest extends \PHPUnit_Framework_TestCase
 {
     private $builder;
@@ -61,3 +33,34 @@ class DicTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("Corley\\Middleware\\MyClass", $obj->getMyClass());
     }
 }
+
+// Support test classes...
+
+class MyClass {}
+class OtherClass {
+    /**
+     * @Inject
+     * @var Corley\Middleware\MyClass
+     */
+    public $myClass;
+}
+
+trait Classable
+{
+    /**
+     * @Inject
+     * @var Corley\Middleware\MyClass
+     */
+    private $myClass;
+
+    public function getMyClass()
+    {
+        return $this->myClass;
+    }
+}
+
+class OverTrait
+{
+    use Classable;
+}
+
