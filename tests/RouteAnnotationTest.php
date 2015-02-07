@@ -14,7 +14,8 @@ class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        AnnotationRegistry::registerFile(__DIR__ . "/../vendor/symfony/routing/Symfony/Component/Routing/Annotation/Route.php");
+        $loader = require __DIR__ . '/../vendor/autoload.php';
+        AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
         $reader = new AnnotationReader();
 
         $this->annotClassLoader = new FrankieAnnotationClassLoader($reader);
@@ -29,8 +30,7 @@ class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
         $collections = $collections->all();
         $route = array_pop($collections);
 
-        $this->assertEquals("Corley\\Middleware\\Stub\\Sut", $route->getOption("_controller"));
-        $this->assertEquals("anAction", $route->getOption("_method"));
+        $this->assertEquals("Corley\\Middleware\\Stub\\Sut", $route->getDefaults()["controller"]);
     }
 }
 

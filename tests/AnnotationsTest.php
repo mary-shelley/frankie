@@ -37,7 +37,9 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        AnnotationRegistry::registerFile(__DIR__ . "/../src/Annotations/Before.php");
+        $loader = require __DIR__ . '/../vendor/autoload.php';
+        AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
+
         $this->reader = new AnnotationReader();
     }
 

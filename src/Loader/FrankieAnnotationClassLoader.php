@@ -11,10 +11,8 @@ class FrankieAnnotationClassLoader extends AnnotationClassLoader
 {
     protected function configureRoute(Route $route, ReflectionClass $class, ReflectionMethod $method, $annot)
     {
-        $route->setOption("_controller", $class->name);
-        $route->setOption("_method", $method->name);
-
-        return $route;
+        $defaults = array('annotation' => $annot, 'controller' => $class->name, 'action' => $method->name);
+        $route->setDefaults($defaults);
     }
 }
 
