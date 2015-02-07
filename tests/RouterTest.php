@@ -14,7 +14,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $routes = new RouteCollection();
-        $routes->add('hello', new Route('/hello', array('controller' => 'foo')));
+        $routes->add('hello', new Route('/hello', array('_controller' => 'foo')));
 
         $this->routes = $routes;
     }
@@ -29,7 +29,6 @@ class RouterTest extends \PHPUnit_Framework_TestCase
 
         $parameters = $matcher->match('/hello');
 
-        $this->assertJsonStringEqualsJsonString('{"_route": "hello", "controller": "foo"}', json_encode($parameters)
-        );
+        $this->assertJsonStringEqualsJsonString('{"_route": "hello", "_controller": "foo"}', json_encode($parameters));
     }
 }
