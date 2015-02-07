@@ -7,7 +7,7 @@ annotations
 <?php
 class MyController
 {
-    use EventManager, Dic;
+    use EventManager;
 
     /**
      * @Route("/my/path", methods={"GET"})
@@ -16,8 +16,6 @@ class MyController
      */
     public function get(Bag $bag, Request $request, Response $response)
     {
-        $odm = $this->getContainer()->get("mongodb_odm");
-
         // ...
 
         $this->getEventManager()->trigger("mark-it", $element);
