@@ -2,43 +2,30 @@
 namespace Corley\Middleware;
 
 use DI\Container;
-use Symfony\Component\Routing\RequestContext;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Corley\Middleware\Loader\FrankieAnnotationClassLoader;
-use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
-use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class App
 {
-    private $request;
-    private $response;
     private $container;
+    private $router;
 
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
-    public function getResponse()
+    public function getRouter()
     {
-        return $this->response;
+        return $this->router;
     }
 
-    public function setResponse($response)
+    public function setRouter(UrlMatcher $router)
     {
-        $this->response = $response;
-        return $this;
-    }
+        $this->router = $router;
 
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    public function setRequest($request)
-    {
-        $this->request = $request;
         return $this;
     }
 
@@ -47,23 +34,18 @@ class App
         return $this->container;
     }
 
-    public function run($path)
+    public function run(Request $request, Response $response)
     {
-        $reader = new AnnotationReader();
-        $frankieLoader = new FrankieAnnotationClassLoader($reader);
-        $loader = new AnnotationDirectoryLoader(new FileLocator([$path]), $frankieLoader);
-        $routes = $loader->load($path);
+        try {
+            $matched = $this->getRouter()->matchRequest($request);
 
-        $context = new RequestContext();
-        $context->fromRequest($this->getRequest());
-        $matcher = new UrlMatcher($routes, $context);
+            $action     = $matched["action"];
+            $controller = $this->getContainer()->get($matched["controller"]);
+            $actionReturn = call_user_func_array([$controller, $action], [$request, $response]);
+        } catch (ResourceNotFoundException $e) {
+            $response->setStatusCode(404);
+        }
 
-        $matched = $matcher->matchRequest($this->getRequest());
-
-        $action     = $matched["action"];
-        $controller = $this->getContainer()->get($matched["controller"]);
-        $response = call_user_func_array([$controller, $action], [$this->getRequest(), $this->getResponse()]);
-
-        $this->getResponse()->send();
+        $response->send();
     }
 }
