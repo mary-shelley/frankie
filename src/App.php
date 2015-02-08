@@ -15,6 +15,8 @@ class App
 {
     private $container;
     private $router;
+    private $request;
+    private $response;
 
     public function __construct(Container $container)
     {
@@ -60,31 +62,25 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $request = $this->request;
-        $response = $this->response;
-
         $reader = new AnnotationReader();
 
         $reflClass = new ReflectionMethod($controller, $action);
         $annotations = $reader->getMethodAnnotations($reflClass);
-        foreach ($annotations as $annotation) {
-            if ($annotation instanceof Before) {
-                $this->executeBeforeActions($annotation->targetClass, $annotation->targetMethod);
-                $newController = $this->getContainer()->get($annotation->targetClass);
-                call_user_func_array([$newController, $annotation->targetMethod], [
-                    $request, $response
-                ]);
-            }
-        }
+        $this->executeBeforeSteps($annotations);
 
         $reflClass = new ReflectionClass($controller);
         $annotations = $reader->getClassAnnotations($reflClass);
+        $this->executeBeforeSteps($annotations);
+    }
+
+    private function executeBeforeSteps(array $annotations)
+    {
         foreach ($annotations as $annotation) {
             if ($annotation instanceof Before) {
                 $this->executeBeforeActions($annotation->targetClass, $annotation->targetMethod);
                 $newController = $this->getContainer()->get($annotation->targetClass);
                 call_user_func_array([$newController, $annotation->targetMethod], [
-                    $request, $response
+                    $this->request, $this->response
                 ]);
             }
         }
