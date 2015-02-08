@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Annotations\Before;
 use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
+use Corley\Middleware\Annotations\Reader;
 
 class App
 {
@@ -62,15 +63,13 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $reader = new AnnotationReader();
+        $reader = new Reader();
 
-        $reflClass = new ReflectionMethod($controller, $action);
-        $annotations = $reader->getMethodAnnotations($reflClass);
-        $this->executeSteps(array_filter($annotations, function($value) {return ($value instanceOf Before) ? true : false;}));
+        $reflMethod = new ReflectionMethod($controller, $action);
+        $this->executeSteps($reader->getBeforeMethodAnnotations($reflMethod));
 
         $reflClass = new ReflectionClass($controller);
-        $annotations = $reader->getClassAnnotations($reflClass);
-        $this->executeSteps(array_filter($annotations, function($value) {return ($value instanceOf Before) ? true : false;}));
+        $this->executeSteps($reader->getBeforeClassAnnotations($reflClass));
     }
 
     private function executeSteps(array $annotations)

@@ -19,9 +19,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $loader = require __DIR__ . '/../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
-        $this->container = $this->getMockBuilder("DI\\Container")
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->container = $this->prophesize("DI\\Container");
         $this->router = $this->getMockBuilder("Symfony\\Component\\Routing\\Matcher\\UrlMatcherInterface")->getMock();
         $this->response = $this->getMockBuilder("Symfony\\Component\\HttpFoundation\\Response")
             ->setMethods(["send"])
@@ -33,10 +31,10 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $this->router->method("match")
             ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "test"]));
-        $this->container->method("get")
-            ->will($this->returnValue(new Index()));
 
-        $app = new App($this->container);
+        $this->container->get(Argument::Any())->willReturn(new Index());
+
+        $app = new App($this->container->reveal());
         $app->setRouter($this->router);
 
         $request = Request::create("/");
@@ -49,7 +47,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $this->router->method("match")->will($this->throwException(new ResourceNotFoundException()));
 
-        $app = new App($this->container);
+        $app = new App($this->container->reveal());
         $app->setRouter($this->router);
 
         $request = Request::create("/");
@@ -67,11 +65,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
         $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
 
-        $this->container->method("get")->with("Corley\\Demo\\Controller\\Index")->will($this->returnValue($index->reveal()));
+        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
 
         $request = Request::create("/");
 
-        $app = new App($this->container);
+        $app = new App($this->container->reveal());
         $app->setRouter($this->router);
 
         $app->run($request, $this->response);
@@ -89,11 +87,37 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
         $index->far(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
 
-        $this->container->method("get")->with("Corley\\Demo\\Controller\\Index")->will($this->returnValue($index->reveal()));
+        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
 
         $request = Request::create("/");
 
-        $app = new App($this->container);
+        $app = new App($this->container->reveal());
+        $app->setRouter($this->router);
+
+        $app->run($request, $this->response);
+
+        $this->assertEquals(200, $this->response->getStatusCode());
+    }
+
+    public function testBeforeHookIsACallChainOverClasses()
+    {
+        $this->router->method("match")
+            ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\My", "action" => "act"]));
+
+        $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
+        $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->far(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+
+        $far = $this->prophesize('Corley\\Demo\\Controller\\My');
+        $far->act(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+
+        $this->container->get("Corley\\Demo\\Controller\\My")->willReturn($far->reveal());
+        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
+
+        $request = Request::create("/");
+
+        $app = new App($this->container->reveal());
         $app->setRouter($this->router);
 
         $app->run($request, $this->response);
