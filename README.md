@@ -14,12 +14,10 @@ class MyController
      * @Before(targetClass="MyHook\ThisOne", targetMethod="count")
      * @After(targetClass="MyHook\AnotherOne", targetMethod="record")
      */
-    public function get(Bag $bag, Request $request, Response $response)
+    public function get(Request $request, Response $response)
     {
         // ...
-
         $this->getEventManager()->trigger("mark-it", $element);
-
         // ...
     }
 }
