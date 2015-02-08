@@ -7,10 +7,8 @@ use DI\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Doctrine\Common\Annotations\AnnotationReader;
-use Corley\Middleware\Annotations\Before;
-use Symfony\Component\Routing\Matcher\UrlMatcherInterface;
 use Corley\Middleware\Annotations\Reader;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
 
 class App
 {
@@ -18,10 +16,17 @@ class App
     private $router;
     private $request;
     private $response;
+    private $reader;
 
-    public function __construct(Container $container)
+    public function __construct(Container $container, Reader $reader)
     {
         $this->container = $container;
+        $this->reader = $reader;
+    }
+
+    public function getContainer()
+    {
+        return $this->container;
     }
 
     public function getRouter()
@@ -29,16 +34,11 @@ class App
         return $this->router;
     }
 
-    public function setRouter(UrlMatcherInterface $router)
+    public function setRouter(UrlMatcher $router)
     {
         $this->router = $router;
 
         return $this;
-    }
-
-    public function getContainer()
-    {
-        return $this->container;
     }
 
     public function run(Request $request, Response $response)
@@ -47,7 +47,7 @@ class App
         $this->response = $response;
 
         try {
-            $matched = $this->getRouter()->match($request->getPathInfo());
+            $matched = $this->getRouter()->matchRequest($request);
 
             $action     = $matched["action"];
             $controller = $matched["controller"];
@@ -63,13 +63,11 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $reader = new Reader();
-
         $reflMethod = new ReflectionMethod($controller, $action);
-        $this->executeSteps($reader->getBeforeMethodAnnotations($reflMethod));
+        $this->executeSteps($this->reader->getBeforeMethodAnnotations($reflMethod));
 
         $reflClass = new ReflectionClass($controller);
-        $this->executeSteps($reader->getBeforeClassAnnotations($reflClass));
+        $this->executeSteps($this->reader->getBeforeClassAnnotations($reflClass));
     }
 
     private function executeSteps(array $annotations)

@@ -7,6 +7,7 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Corley\Demo\Controller\Index;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Prophecy\Argument;
+use Corley\Middleware\Annotations\Reader;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
@@ -16,11 +17,11 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $loader = require __DIR__ . '/../vendor/autoload.php';
+        $loader = require __DIR__.'/../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
         $this->container = $this->prophesize("DI\\Container");
-        $this->router = $this->getMockBuilder("Symfony\\Component\\Routing\\Matcher\\UrlMatcherInterface")->getMock();
+        $this->router = $this->prophesize("Symfony\\Component\\Routing\\Matcher\\UrlMatcher");
         $this->response = $this->getMockBuilder("Symfony\\Component\\HttpFoundation\\Response")
             ->setMethods(["send"])
             ->getMock();
@@ -29,13 +30,12 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testSimpleCorrectFlow()
     {
-        $this->router->method("match")
-            ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "test"]));
+        $this->router->matchRequest(Argument::Any())->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "test"]);
 
         $this->container->get(Argument::Any())->willReturn(new Index());
 
-        $app = new App($this->container->reveal());
-        $app->setRouter($this->router);
+        $app = new App($this->container->reveal(), new Reader());
+        $app->setRouter($this->router->reveal());
 
         $request = Request::create("/");
         $app->run($request, $this->response);
@@ -45,10 +45,10 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function test404ErrorPage()
     {
-        $this->router->method("match")->will($this->throwException(new ResourceNotFoundException()));
+        $this->router->matchRequest(Argument::Any())->willThrow("Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException");
 
-        $app = new App($this->container->reveal());
-        $app->setRouter($this->router);
+        $app = new App($this->container->reveal(), new Reader());
+        $app->setRouter($this->router->reveal());
 
         $request = Request::create("/");
         $app->run($request, $this->response);
@@ -58,8 +58,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeHookIsCalled()
     {
-        $this->router->method("match")
-            ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "index"]));
+        $this->router->matchRequest(Argument::Any())
+            ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "index"]);
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
         $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
@@ -69,8 +69,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $request = Request::create("/");
 
-        $app = new App($this->container->reveal());
-        $app->setRouter($this->router);
+        $app = new App($this->container->reveal(), new Reader());
+        $app->setRouter($this->router->reveal());
 
         $app->run($request, $this->response);
 
@@ -79,8 +79,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeHookIsACallChain()
     {
-        $this->router->method("match")
-            ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "far"]));
+        $this->router->matchRequest(Argument::Any())
+            ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "far"]);
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
         $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
@@ -91,8 +91,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $request = Request::create("/");
 
-        $app = new App($this->container->reveal());
-        $app->setRouter($this->router);
+        $app = new App($this->container->reveal(), new Reader());
+        $app->setRouter($this->router->reveal());
 
         $app->run($request, $this->response);
 
@@ -101,8 +101,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeHookIsACallChainOverClasses()
     {
-        $this->router->method("match")
-            ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\My", "action" => "act"]));
+        $this->router->matchRequest(Argument::Any())
+            ->willReturn(["controller" => "Corley\\Demo\\Controller\\My", "action" => "act"]);
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
         $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
@@ -117,8 +117,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $request = Request::create("/");
 
-        $app = new App($this->container->reveal());
-        $app->setRouter($this->router);
+        $app = new App($this->container->reveal(), new Reader());
+        $app->setRouter($this->router->reveal());
 
         $app->run($request, $this->response);
 

@@ -9,9 +9,9 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
 use Symfony\Component\Config\FileLocator;
 use Corley\Middleware\Loader\FrankieAnnotationClassLoader;
-use Doctrine\Common\Annotations\AnnotationReader;
+use Corley\Middleware\Annotations\Reader;
 
-$loader = require_once __DIR__ . '/../vendor/autoload.php';
+$loader = require_once __DIR__.'/../vendor/autoload.php';
 AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
 $builder = new ContainerBuilder();
@@ -20,15 +20,15 @@ $container = $builder->build();
 $request = Request::createFromGlobals();
 $response = new Response();
 
-$reader = new AnnotationReader();
+$reader = new Reader();
 $frankieLoader = new FrankieAnnotationClassLoader($reader);
-$loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__ . '/../app']), $frankieLoader);
-$routes = $loader->load(__DIR__ . '/../app');
+$loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__.'/../app']), $frankieLoader);
+$routes = $loader->load(__DIR__.'/../app');
 
 $context = new RequestContext();
 $context->fromRequest($request);
 $matcher = new UrlMatcher($routes, $context);
 
-$app = new App($container);
+$app = new App($container, $reader);
 $app->setRouter($matcher);
 $app->run($request, $response);
