@@ -66,23 +66,21 @@ class App
 
         $reflClass = new ReflectionMethod($controller, $action);
         $annotations = $reader->getMethodAnnotations($reflClass);
-        $this->executeBeforeSteps($annotations);
+        $this->executeSteps(array_filter($annotations, function($value) {return ($value instanceOf Before) ? true : false;}));
 
         $reflClass = new ReflectionClass($controller);
         $annotations = $reader->getClassAnnotations($reflClass);
-        $this->executeBeforeSteps($annotations);
+        $this->executeSteps(array_filter($annotations, function($value) {return ($value instanceOf Before) ? true : false;}));
     }
 
-    private function executeBeforeSteps(array $annotations)
+    private function executeSteps(array $annotations)
     {
         foreach ($annotations as $annotation) {
-            if ($annotation instanceof Before) {
-                $this->executeBeforeActions($annotation->targetClass, $annotation->targetMethod);
-                $newController = $this->getContainer()->get($annotation->targetClass);
-                call_user_func_array([$newController, $annotation->targetMethod], [
-                    $this->request, $this->response
-                ]);
-            }
+            $this->executeBeforeActions($annotation->targetClass, $annotation->targetMethod);
+            $newController = $this->getContainer()->get($annotation->targetClass);
+            call_user_func_array([$newController, $annotation->targetMethod], [
+                $this->request, $this->response
+            ]);
         }
     }
 }

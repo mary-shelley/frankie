@@ -78,4 +78,26 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $this->response->getStatusCode());
     }
+
+    public function testBeforeHookIsACallChain()
+    {
+        $this->router->method("match")
+            ->will($this->returnValue(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "far"]));
+
+        $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
+        $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->far(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+
+        $this->container->method("get")->with("Corley\\Demo\\Controller\\Index")->will($this->returnValue($index->reveal()));
+
+        $request = Request::create("/");
+
+        $app = new App($this->container);
+        $app->setRouter($this->router);
+
+        $app->run($request, $this->response);
+
+        $this->assertEquals(200, $this->response->getStatusCode());
+    }
 }

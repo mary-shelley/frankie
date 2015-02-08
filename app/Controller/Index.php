@@ -29,6 +29,15 @@ class Index
         $response->headers->set("content-type", "application/json");
     }
 
+    /**
+     * @Route("/far")
+     * @Before(targetClass="Corley\Demo\Controller\Index", targetMethod="index")
+     */
+    public function far()
+    {
+
+    }
+
     public function getBag()
     {
         return $this->bag;
