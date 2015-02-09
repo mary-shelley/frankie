@@ -5,6 +5,7 @@ use ReflectionMethod;
 use ReflectionClass;
 use Corley\Middleware\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Annotations\AnnotationReader;
 
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +16,7 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
         $loader = require __DIR__ . '/../../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
-        $this->sut = new Reader();
+        $this->sut = new Reader(new AnnotationReader());
     }
 
     public function testFilterBeforeMethodSteps()

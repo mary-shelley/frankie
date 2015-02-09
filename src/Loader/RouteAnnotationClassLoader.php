@@ -7,7 +7,7 @@ use ReflectionMethod;
 use Symfony\Component\Routing\Route;
 
 
-class FrankieAnnotationClassLoader extends AnnotationClassLoader
+class RouteAnnotationClassLoader extends AnnotationClassLoader
 {
     protected function configureRoute(Route $route, ReflectionClass $class, ReflectionMethod $method, $annot)
     {

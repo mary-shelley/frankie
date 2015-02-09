@@ -6,7 +6,7 @@ use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Corley\Middleware\Loader\FrankieAnnotationClassLoader;
+use Corley\Middleware\Loader\RouteAnnotationClassLoader;
 
 class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,7 +18,7 @@ class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
         $reader = new AnnotationReader();
 
-        $this->annotClassLoader = new FrankieAnnotationClassLoader($reader);
+        $this->annotClassLoader = new RouteAnnotationClassLoader($reader);
     }
 
     public function testCollectRoutes()

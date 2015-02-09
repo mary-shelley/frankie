@@ -5,15 +5,21 @@ use ReflectionClass;
 use ReflectionMethod;
 use Doctrine\Common\Annotations\AnnotationReader;
 
-class Reader extends AnnotationReader
+class Reader
 {
+    private $reader;
+
+    public function __construct(AnnotationReader $reader)
+    {
+        $this->reader = $reader;
+    }
     public function getBeforeClassAnnotations(ReflectionClass $refl)
     {
-        return array_filter($this->getClassAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
+        return array_filter($this->reader->getClassAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
     }
 
     public function getBeforeMethodAnnotations(ReflectionMethod $refl)
     {
-        return array_filter($this->getMethodAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
+        return array_filter($this->reader->getMethodAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
     }
 }
