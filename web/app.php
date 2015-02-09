@@ -31,4 +31,5 @@ $matcher = new UrlMatcher($routes, $context);
 
 $app = new App($container, $reader);
 $app->setRouter($matcher);
-$app->run($request, $response);
+$response = $app->run($request, $response);
+$response->send();

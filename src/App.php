@@ -58,7 +58,7 @@ class App
             $response->setStatusCode(404);
         }
 
-        $response->send();
+        return $response;
     }
 
     private function executeBeforeActions($controller, $action)

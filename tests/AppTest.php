@@ -8,6 +8,7 @@ use Corley\Demo\Controller\Index;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Prophecy\Argument;
 use Corley\Middleware\Annotations\Reader;
+use Symfony\Component\HttpFoundation\Response;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,10 +23,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->container = $this->prophesize("DI\\Container");
         $this->router = $this->prophesize("Symfony\\Component\\Routing\\Matcher\\UrlMatcher");
-        $this->response = $this->getMockBuilder("Symfony\\Component\\HttpFoundation\\Response")
-            ->setMethods(["send"])
-            ->getMock();
-        $this->response->method("send")->willReturn(null);
+        $this->response = new Response();
     }
 
     public function testSimpleCorrectFlow()
