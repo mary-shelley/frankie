@@ -21,16 +21,14 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterBeforeMethodSteps()
     {
-        $refl = new ReflectionMethod("Corley\\Demo\\Controller\\Index", "index");
-        $annots = $this->sut->getBeforeMethodAnnotations($refl);
+        $annots = $this->sut->getBeforeMethodAnnotations("Corley\\Demo\\Controller\\Index", "index");
 
         $this->assertCount(1, $annots);
     }
 
     public function testFilterBeforeClassSteps()
     {
-        $refl = new ReflectionClass("Corley\\Demo\\Controller\\My");
-        $annots = $this->sut->getBeforeClassAnnotations($refl);
+        $annots = $this->sut->getBeforeClassAnnotations("Corley\\Demo\\Controller\\My");
 
         $this->assertCount(1, $annots);
     }

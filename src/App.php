@@ -63,11 +63,8 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $reflMethod = new ReflectionMethod($controller, $action);
-        $this->executeSteps($this->reader->getBeforeMethodAnnotations($reflMethod));
-
-        $reflClass = new ReflectionClass($controller);
-        $this->executeSteps($this->reader->getBeforeClassAnnotations($reflClass));
+        $this->executeSteps($this->reader->getBeforeMethodAnnotations($controller, $action));
+        $this->executeSteps($this->reader->getBeforeClassAnnotations($controller));
     }
 
     private function executeSteps(array $annotations)

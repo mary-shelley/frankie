@@ -13,13 +13,15 @@ class Reader
     {
         $this->reader = $reader;
     }
-    public function getBeforeClassAnnotations(ReflectionClass $refl)
+    public function getBeforeClassAnnotations($clazz)
     {
+        $refl = new ReflectionClass($clazz);
         return array_filter($this->reader->getClassAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
     }
 
-    public function getBeforeMethodAnnotations(ReflectionMethod $refl)
+    public function getBeforeMethodAnnotations($clazz, $method)
     {
+        $refl = new ReflectionMethod($clazz, $method);
         return array_filter($this->reader->getMethodAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
     }
 }
