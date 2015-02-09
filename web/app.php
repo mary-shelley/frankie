@@ -9,8 +9,8 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
 use Symfony\Component\Config\FileLocator;
 use Corley\Middleware\Loader\RouteAnnotationClassLoader;
-use Corley\Middleware\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Corley\Middleware\Reader\HookReader;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
@@ -31,9 +31,10 @@ $context = new RequestContext();
 $context->fromRequest($request);
 $matcher = new UrlMatcher($routes, $context);
 
-$hookReader = new Reader($reader);
+$hookReader = new HookReader($reader);
 
-$app = new App($container, $hookReader);
+$app = new App($container);
+$app->setReader($hookReader);
 $app->setRouter($matcher);
 $response = $app->run($request, $response);
 $response->send();

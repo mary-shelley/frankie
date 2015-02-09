@@ -7,9 +7,9 @@ use Doctrine\Common\Annotations\AnnotationRegistry;
 use Corley\Demo\Controller\Index;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Prophecy\Argument;
-use Corley\Middleware\Annotations\Reader;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Corley\Middleware\Reader\HookReader as Reader;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,7 +33,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->container->get(Argument::Any())->willReturn(new Index());
 
-        $app = new App($this->container->reveal(), new Reader(new AnnotationReader()));
+        $app = new App($this->container->reveal());
+        $app->setReader(new Reader(new AnnotationReader()));
         $app->setRouter($this->router->reveal());
 
         $request = Request::create("/");
@@ -46,7 +47,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
     {
         $this->router->matchRequest(Argument::Any())->willThrow("Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException");
 
-        $app = new App($this->container->reveal(), new Reader(new AnnotationReader()));
+        $app = new App($this->container->reveal());
+        $app->setReader(new Reader(new AnnotationReader()));
         $app->setRouter($this->router->reveal());
 
         $request = Request::create("/");
@@ -68,7 +70,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $request = Request::create("/");
 
-        $app = new App($this->container->reveal(), new Reader(new AnnotationReader()));
+        $app = new App($this->container->reveal());
+        $app->setReader(new Reader(new AnnotationReader()));
         $app->setRouter($this->router->reveal());
 
         $app->run($request, $this->response);
@@ -90,7 +93,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $request = Request::create("/");
 
-        $app = new App($this->container->reveal(), new Reader(new AnnotationReader()));
+        $app = new App($this->container->reveal());
+        $app->setReader(new Reader(new AnnotationReader()));
         $app->setRouter($this->router->reveal());
 
         $app->run($request, $this->response);
@@ -116,7 +120,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $request = Request::create("/");
 
-        $app = new App($this->container->reveal(), new Reader(new AnnotationReader()));
+        $app = new App($this->container->reveal());
+        $app->setReader(new Reader(new AnnotationReader()));
         $app->setRouter($this->router->reveal());
 
         $app->run($request, $this->response);

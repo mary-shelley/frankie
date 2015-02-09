@@ -7,8 +7,8 @@ use DI\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Corley\Middleware\Annotations\Reader;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Corley\Middleware\Reader\HookReader;
 
 class App
 {
@@ -18,10 +18,20 @@ class App
     private $response;
     private $reader;
 
-    public function __construct(Container $container, Reader $reader)
+    public function __construct(Container $container)
     {
         $this->container = $container;
+    }
+
+    public function getReader()
+    {
+        return $this->reader;
+    }
+
+    public function setReader(HookReader $reader)
+    {
         $this->reader = $reader;
+        return $this;
     }
 
     public function getContainer()
@@ -63,8 +73,8 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $this->executeSteps($this->reader->getBeforeMethodAnnotations($controller, $action));
-        $this->executeSteps($this->reader->getBeforeClassAnnotations($controller));
+        $this->executeSteps($this->getReader()->getBeforeMethodAnnotations($controller, $action));
+        $this->executeSteps($this->getReader()->getBeforeClassAnnotations($controller));
     }
 
     private function executeSteps(array $annotations)

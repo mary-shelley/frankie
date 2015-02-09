@@ -1,11 +1,12 @@
 <?php
-namespace Corley\Middleware\Annotations;
+namespace Corley\Middleware\Reader;
 
 use ReflectionClass;
 use ReflectionMethod;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Corley\Middleware\Annotations\Before;
 
-class Reader
+class HookReader
 {
     private $reader;
 
