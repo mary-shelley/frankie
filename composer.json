@@ -9,7 +9,9 @@
         "symfony/config": "~2.6"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4"
+        "zendframework/zend-eventmanager": "~2",
+        "phpunit/phpunit": "~4",
+        "phpspec/phpspec": "~2.0"
     },
     "autoload": {
         "psr-4": {

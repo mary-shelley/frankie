@@ -6,10 +6,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Corley\Middleware\Annotations\Before;
+use Zend\EventManager\EventManager;
 
 class Index
 {
     private $bag;
+
+    /**
+     * @Inject
+     * @var Zend\EventManager\EventManager
+     */
+    private $eventManager;
 
     /**
      * @Route("/")
@@ -35,7 +42,7 @@ class Index
      */
     public function far()
     {
-
+        $this->eventManager->trigger("mark-it", ["event" => "far"]);
     }
 
     public function getBag()
@@ -49,4 +56,8 @@ class Index
         return $this;
     }
 
+    public function setEventManager(EventManager $em)
+    {
+        $this->eventManager = $em;
+    }
 }

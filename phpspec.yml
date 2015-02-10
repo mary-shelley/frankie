@@ -1,4 +1,4 @@
 suites:
   frankie_suite:
-    namespace: Corley\Middleware
-    psr4_prefix: Corley\Middleware
+    namespace: Corley\Demo
+    psr4_prefix: Corley\Demo
