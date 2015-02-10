@@ -7,17 +7,20 @@ annotations
 <?php
 class MyController
 {
-    use EventManager;
+    /**
+     * @Inject
+     * @var Zend\EventManager\EventManager
+     */
+    private $eventManager;
 
     /**
      * @Route("/my/path", methods={"GET"})
      * @Before(targetClass="MyHook\ThisOne", targetMethod="count")
-     * @After(targetClass="MyHook\AnotherOne", targetMethod="record")
      */
     public function get(Request $request, Response $response)
     {
         // ...
-        $this->getEventManager()->trigger("mark-it", $element);
+        $this->eventManager->trigger("mark-it", $element);
         // ...
     }
 }
