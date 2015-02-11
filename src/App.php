@@ -23,34 +23,6 @@ class App
         $this->container = $container;
     }
 
-    public function getReader()
-    {
-        return $this->reader;
-    }
-
-    public function setReader(HookReader $reader)
-    {
-        $this->reader = $reader;
-        return $this;
-    }
-
-    public function getContainer()
-    {
-        return $this->container;
-    }
-
-    public function getRouter()
-    {
-        return $this->router;
-    }
-
-    public function setRouter(UrlMatcher $router)
-    {
-        $this->router = $router;
-
-        return $this;
-    }
-
     public function run(Request $request, Response $response)
     {
         $this->request = $request;
@@ -93,5 +65,33 @@ class App
                 $this->request, $this->response, $data
             ]);
         }
+    }
+
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
+    public function getReader()
+    {
+        return $this->reader;
+    }
+
+    public function setReader(HookReader $reader)
+    {
+        $this->reader = $reader;
+        return $this;
+    }
+
+    public function getRouter()
+    {
+        return $this->router;
+    }
+
+    public function setRouter(UrlMatcher $router)
+    {
+        $this->router = $router;
+
+        return $this;
     }
 }
