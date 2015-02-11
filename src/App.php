@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Corley\Middleware\Reader\HookReader;
+use Corley\Middleware\Annotations\Before;
+use Corley\Middleware\Annotations\After;
 
 class App
 {
@@ -33,10 +35,10 @@ class App
 
             $action     = $matched["action"];
             $controller = $matched["controller"];
-            $this->executeBeforeActions($controller, $action);
+            $this->executeActionsFor($controller, $action, Before::class);
             $controller = $this->getContainer()->get($controller);
             $actionReturn = call_user_func_array([$controller, $action], [$request, $response]);
-            $this->executeAfterActions($controller, $action, $actionReturn);
+            $this->executeActionsFor($controller, $action, After::class, $actionReturn);
         } catch (ResourceNotFoundException $e) {
             $response->setStatusCode(404);
         }
@@ -44,22 +46,16 @@ class App
         return $response;
     }
 
-    private function executeBeforeActions($controller, $action)
+    private function executeActionsFor($controller, $action, $filterClass, $data = null)
     {
-        $this->executeSteps($this->getReader()->getBeforeMethodAnnotations($controller, $action), [$this, "executeBeforeActions"]);
-        $this->executeSteps($this->getReader()->getBeforeClassAnnotations($controller), [$this, "executeBeforeActions"]);
+        $this->executeSteps($this->getReader()->getMethodAnnotationsFor($controller, $action, $filterClass), [$this, __FUNCTION__], $filterClass, $data);
+        $this->executeSteps($this->getReader()->getClassAnnotationsFor($controller, $filterClass), [$this, __FUNCTION__], $filterClass, $data);
     }
 
-    private function executeAfterActions($controller, $action, $data)
-    {
-        $this->executeSteps($this->getReader()->getAfterMethodAnnotations($controller, $action), [$this, "executeAfterActions"], $data);
-        $this->executeSteps($this->getReader()->getAfterClassAnnotations($controller), [$this, "executeAfterActions"], $data);
-    }
-
-    private function executeSteps(array $annotations, Callable $method, $data = null)
+    private function executeSteps(array $annotations, Callable $method, $filterClass, $data = null)
     {
         foreach ($annotations as $annotation) {
-            $method($annotation->targetClass, $annotation->targetMethod, $data);
+            $method($annotation->targetClass, $annotation->targetMethod, $filterClass, $data);
             $newController = $this->getContainer()->get($annotation->targetClass);
             call_user_func_array([$newController, $annotation->targetMethod], [
                 $this->request, $this->response, $data

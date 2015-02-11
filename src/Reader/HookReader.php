@@ -16,16 +16,23 @@ class HookReader
         $this->reader = $reader;
     }
 
-    public function getBeforeClassAnnotations($clazz)
+    public function getClassAnnotationsFor($clazz, $instanceOf)
     {
         $refl = new ReflectionClass($clazz);
-        return array_filter($this->reader->getClassAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
+        return array_filter(
+            $this->reader->getClassAnnotations($refl), function($value) use ($instanceOf) {
+                return ($value instanceOf $instanceOf) ? true : false;
+            });
     }
 
-    public function getBeforeMethodAnnotations($clazz, $method)
+    public function getMethodAnnotationsFor($clazz, $method, $instanceOf)
     {
         $refl = new ReflectionMethod($clazz, $method);
-        return array_filter($this->reader->getMethodAnnotations($refl), function($value) {return ($value instanceOf Before) ? true : false;});
+        return array_filter(
+            $this->reader->getMethodAnnotations($refl), function($value) use ($instanceOf) {
+                return ($value instanceOf $instanceOf) ? true : false;
+            }
+        );
     }
 
     public function getAfterClassAnnotations($clazz)

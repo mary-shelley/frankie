@@ -6,6 +6,8 @@ use ReflectionClass;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Reader\HookReader;
+use Corley\Middleware\Annotations\Before;
+use Corley\Middleware\Annotations\After;
 
 class HookReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,28 +23,28 @@ class HookReaderTest extends \PHPUnit_Framework_TestCase
 
     public function testFilterBeforeMethodSteps()
     {
-        $annots = $this->sut->getBeforeMethodAnnotations("Corley\\Demo\\Controller\\Index", "index");
+        $annots = $this->sut->getMethodAnnotationsFor("Corley\\Demo\\Controller\\Index", "index", Before::class);
 
         $this->assertCount(1, $annots);
     }
 
     public function testFilterBeforeClassSteps()
     {
-        $annots = $this->sut->getBeforeClassAnnotations("Corley\\Demo\\Controller\\My");
+        $annots = $this->sut->getClassAnnotationsFor("Corley\\Demo\\Controller\\My", Before::class);
 
         $this->assertCount(1, $annots);
     }
 
     public function testFilterAfterMethodSteps()
     {
-        $annots = $this->sut->getAfterMethodAnnotations("Corley\\Demo\\Controller\\Index", "step");
+        $annots = $this->sut->getMethodAnnotationsFor("Corley\\Demo\\Controller\\Index", "step", After::class);
 
         $this->assertCount(1, $annots);
     }
 
     public function testFilterAfterClassSteps()
     {
-        $annots = $this->sut->getAfterClassAnnotations("Corley\\Demo\\Controller\\My");
+        $annots = $this->sut->getClassAnnotationsFor("Corley\\Demo\\Controller\\My", After::class);
 
         $this->assertCount(1, $annots);
     }
