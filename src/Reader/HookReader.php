@@ -34,16 +34,4 @@ class HookReader
             }
         );
     }
-
-    public function getAfterClassAnnotations($clazz)
-    {
-        $refl = new ReflectionClass($clazz);
-        return array_filter($this->reader->getClassAnnotations($refl), function($value) {return ($value instanceOf After) ? true : false;});
-    }
-
-    public function getAfterMethodAnnotations($clazz, $method)
-    {
-        $refl = new ReflectionMethod($clazz, $method);
-        return array_filter($this->reader->getMethodAnnotations($refl), function($value) {return ($value instanceOf After) ? true : false;});
-    }
 }
