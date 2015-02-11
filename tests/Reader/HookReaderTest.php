@@ -32,4 +32,18 @@ class HookReaderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertCount(1, $annots);
     }
+
+    public function testFilterAfterMethodSteps()
+    {
+        $annots = $this->sut->getAfterMethodAnnotations("Corley\\Demo\\Controller\\Index", "step");
+
+        $this->assertCount(1, $annots);
+    }
+
+    public function testFilterAfterClassSteps()
+    {
+        $annots = $this->sut->getAfterClassAnnotations("Corley\\Demo\\Controller\\My");
+
+        $this->assertCount(1, $annots);
+    }
 }

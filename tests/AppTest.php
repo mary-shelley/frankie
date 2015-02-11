@@ -10,6 +10,7 @@ use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Reader\HookReader as Reader;
+use Corley\Middleware\Annotations\After;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
@@ -127,5 +128,45 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $app->run($request, $this->response);
 
         $this->assertEquals(200, $this->response->getStatusCode());
+    }
+
+    public function testAfterHookIsCalled()
+    {
+        $this->router->matchRequest(Argument::Any())
+            ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "step"]);
+
+        $reader = $this->getReaderForAfterHook();
+
+        $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
+        $index->step(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->toJson(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+
+        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
+
+        $request = Request::create("/");
+
+        $app = new App($this->container->reveal());
+        $app->setReader($reader->reveal());
+        $app->setRouter($this->router->reveal());
+
+        $app->run($request, $this->response);
+
+        $this->assertEquals(200, $this->response->getStatusCode());
+    }
+
+    private function getReaderForAfterHook()
+    {
+        $annot = new After();
+        $annot->targetClass = "Corley\\Demo\\Controller\\Index";
+        $annot->targetMethod = "toJson";
+
+        $reader = $this->prophesize("Corley\\Middleware\\Reader\\HookReader");
+        $reader->getBeforeClassAnnotations(Argument::Any())->willReturn([]);
+        $reader->getBeforeMethodAnnotations(Argument::Any(), Argument::Any())->willReturn([]);
+        $reader->getAfterClassAnnotations(Argument::Any())->willReturn([]);
+        $reader->getAfterMethodAnnotations(Argument::Any(), "step")->willReturn([$annot]);
+        $reader->getAfterMethodAnnotations(Argument::Any(), "toJson")->willReturn([]);
+
+        return $reader;
     }
 }

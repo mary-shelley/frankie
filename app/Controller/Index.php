@@ -5,6 +5,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+use Corley\Middleware\Annotations\After;
 use Corley\Middleware\Annotations\Before;
 use Zend\EventManager\EventManager;
 
@@ -43,6 +44,21 @@ class Index
     public function far()
     {
         $this->eventManager->trigger("mark-it", ["event" => "far"]);
+    }
+
+    /**
+     * @Route("/step")
+     * @After(targetClass="Corley\Demo\Controller\Index", targetMethod="toJson")
+     */
+    public function step()
+    {
+        return ["response" => "OK"];
+    }
+
+    public function toJson(Request $request, Response $response, $data)
+    {
+        $response->headers->set("Content-Type", "application/json");
+        $response->setContent(json_encode($data));
     }
 
     public function getBag()

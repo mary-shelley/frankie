@@ -64,6 +64,7 @@ class App
             $this->executeBeforeActions($controller, $action);
             $controller = $this->getContainer()->get($controller);
             $actionReturn = call_user_func_array([$controller, $action], [$request, $response]);
+            $this->executeAfterActions($controller, $action, $actionReturn);
         } catch (ResourceNotFoundException $e) {
             $response->setStatusCode(404);
         }
@@ -73,17 +74,34 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $this->executeSteps($this->getReader()->getBeforeMethodAnnotations($controller, $action));
-        $this->executeSteps($this->getReader()->getBeforeClassAnnotations($controller));
+        $this->executeBeforeSteps($this->getReader()->getBeforeMethodAnnotations($controller, $action));
+        $this->executeBeforeSteps($this->getReader()->getBeforeClassAnnotations($controller));
     }
 
-    private function executeSteps(array $annotations)
+    private function executeBeforeSteps(array $annotations)
     {
         foreach ($annotations as $annotation) {
             $this->executeBeforeActions($annotation->targetClass, $annotation->targetMethod);
             $newController = $this->getContainer()->get($annotation->targetClass);
             call_user_func_array([$newController, $annotation->targetMethod], [
                 $this->request, $this->response
+            ]);
+        }
+    }
+
+    private function executeAfterActions($controller, $action, $data)
+    {
+        $this->executeAfterSteps($this->getReader()->getAfterMethodAnnotations($controller, $action), $data);
+        $this->executeAfterSteps($this->getReader()->getAfterClassAnnotations($controller), $data);
+    }
+
+    private function executeAfterSteps(array $annotations, $data)
+    {
+        foreach ($annotations as $annotation) {
+            $this->executeAfterActions($annotation->targetClass, $annotation->targetMethod, $data);
+            $newController = $this->getContainer()->get($annotation->targetClass);
+            call_user_func_array([$newController, $annotation->targetMethod], [
+                $this->request, $this->response, $data
             ]);
         }
     }
