@@ -48,8 +48,11 @@ class App
 
     private function executeActionsFor($controller, $action, $filterClass, $data = null)
     {
-        $this->executeSteps($this->getReader()->getMethodAnnotationsFor($controller, $action, $filterClass), [$this, __FUNCTION__], $filterClass, $data);
-        $this->executeSteps($this->getReader()->getClassAnnotationsFor($controller, $filterClass), [$this, __FUNCTION__], $filterClass, $data);
+        $methodAnnotations = $this->getReader()->getMethodAnnotationsFor($controller, $action, $filterClass);
+        $this->executeSteps($methodAnnotations, [$this, __FUNCTION__], $filterClass, $data);
+
+        $classAnnotations = $this->getReader()->getClassAnnotationsFor($controller, $filterClass);
+        $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data);
     }
 
     private function executeSteps(array $annotations, Callable $method, $filterClass, $data = null)
