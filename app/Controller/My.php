@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Before(targetClass="Corley\Demo\Controller\Index", targetMethod="far")
- * @After(targetClass="Corley\Demo\Controller\Index", targetMethod="after")
+ * @After(targetClass="Corley\Demo\Controller\Index", targetMethod="toJson")
  */
 class My
 {
@@ -16,6 +16,6 @@ class My
      */
     public function act()
     {
-
+        return [];
     }
 }

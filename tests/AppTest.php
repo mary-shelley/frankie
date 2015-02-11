@@ -64,8 +64,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
             ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "index"]);
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->index(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->test(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
 
         $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
 
@@ -86,9 +86,9 @@ class AppTest extends \PHPUnit_Framework_TestCase
             ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "far"]);
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->far(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->index(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->test(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->far(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
 
         $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
 
@@ -109,9 +109,9 @@ class AppTest extends \PHPUnit_Framework_TestCase
             ->willReturn(["controller" => "Corley\\Demo\\Controller\\My", "action" => "act"]);
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->index(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->test(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->far(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->index(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->test(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->far(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
 
         $far = $this->prophesize('Corley\\Demo\\Controller\\My');
         $far->act(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
@@ -138,7 +138,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $reader = $this->getReaderForAfterHook();
 
         $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->step(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
+        $index->step(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
         $index->toJson(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
 
         $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());

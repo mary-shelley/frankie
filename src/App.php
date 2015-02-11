@@ -74,31 +74,20 @@ class App
 
     private function executeBeforeActions($controller, $action)
     {
-        $this->executeBeforeSteps($this->getReader()->getBeforeMethodAnnotations($controller, $action));
-        $this->executeBeforeSteps($this->getReader()->getBeforeClassAnnotations($controller));
-    }
-
-    private function executeBeforeSteps(array $annotations)
-    {
-        foreach ($annotations as $annotation) {
-            $this->executeBeforeActions($annotation->targetClass, $annotation->targetMethod);
-            $newController = $this->getContainer()->get($annotation->targetClass);
-            call_user_func_array([$newController, $annotation->targetMethod], [
-                $this->request, $this->response
-            ]);
-        }
+        $this->executeSteps($this->getReader()->getBeforeMethodAnnotations($controller, $action), [$this, "executeBeforeActions"]);
+        $this->executeSteps($this->getReader()->getBeforeClassAnnotations($controller), [$this, "executeBeforeActions"]);
     }
 
     private function executeAfterActions($controller, $action, $data)
     {
-        $this->executeAfterSteps($this->getReader()->getAfterMethodAnnotations($controller, $action), $data);
-        $this->executeAfterSteps($this->getReader()->getAfterClassAnnotations($controller), $data);
+        $this->executeSteps($this->getReader()->getAfterMethodAnnotations($controller, $action), [$this, "executeAfterActions"], $data);
+        $this->executeSteps($this->getReader()->getAfterClassAnnotations($controller), [$this, "executeAfterActions"], $data);
     }
 
-    private function executeAfterSteps(array $annotations, $data)
+    private function executeSteps(array $annotations, Callable $method, $data = null)
     {
         foreach ($annotations as $annotation) {
-            $this->executeAfterActions($annotation->targetClass, $annotation->targetMethod, $data);
+            $method($annotation->targetClass, $annotation->targetMethod, $data);
             $newController = $this->getContainer()->get($annotation->targetClass);
             call_user_func_array([$newController, $annotation->targetMethod], [
                 $this->request, $this->response, $data
