@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Corley\Middleware\Reader\HookReader;
 use Corley\Middleware\Annotations\Before;
 use Corley\Middleware\Annotations\After;
+use Interop\Container\ContainerInterface;
 
 class App
 {
@@ -20,7 +21,7 @@ class App
     private $response;
     private $reader;
 
-    public function __construct(Container $container)
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }

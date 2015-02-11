@@ -2,6 +2,7 @@
     "name": "wdalmut/frankie",
     "license": "MIT",
     "require": {
+        "acclimate/container": "~1",
         "doctrine/annotations": "~1.2",
         "mnapoli/php-di": "~4.0",
         "symfony/routing": "~2.6",

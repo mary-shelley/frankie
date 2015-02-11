@@ -11,12 +11,17 @@ use Symfony\Component\Config\FileLocator;
 use Corley\Middleware\Loader\RouteAnnotationClassLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Reader\HookReader;
+use Acclimate\Container\CompositeContainer;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
+$container = new CompositeContainer();
+
 $builder = new ContainerBuilder();
-$container = $builder->build();
+$builder->wrapContainer($container);
+$diContainer = $builder->build();
+$container->addContainer($diContainer);
 
 $request = Request::createFromGlobals();
 $response = new Response();
