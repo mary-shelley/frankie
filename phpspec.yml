@@ -1,4 +1,12 @@
 suites:
+  src_suite:
+    namespace: Corley\Middleware
+    psr4_prefix: Corley\Middleware
+    src_path: 'src'
+    spec_path: '.'
   frankie_suite:
     namespace: Corley\Demo
     psr4_prefix: Corley\Demo
+    src_path: 'app'
+    spec_path: 'app'
+    spec_prefix: ''

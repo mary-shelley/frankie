@@ -12,6 +12,7 @@ use Corley\Middleware\Loader\RouteAnnotationClassLoader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Reader\HookReader;
 use Acclimate\Container\CompositeContainer;
+use Corley\Middleware\Executor\AnnotExecutor;
 
 $loader = require_once __DIR__.'/../vendor/autoload.php';
 AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
@@ -38,8 +39,8 @@ $matcher = new UrlMatcher($routes, $context);
 
 $hookReader = new HookReader($reader);
 
-$app = new App($container);
-$app->setReader($hookReader);
-$app->setRouter($matcher);
+$executor = new AnnotExecutor($container, $hookReader);
+
+$app = new App($matcher, $executor);
 $response = $app->run($request, $response);
 $response->send();
