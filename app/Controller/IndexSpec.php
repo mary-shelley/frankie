@@ -1,6 +1,6 @@
 <?php
 
-namespace spec\Corley\Demo\Controller;
+namespace Corley\Demo\Controller;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
