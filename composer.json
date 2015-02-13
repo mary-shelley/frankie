@@ -21,8 +21,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Corley\\Middleware\\": "tests/",
-            "Corley\\Demo\\": "app/"
+            "Corley\\Middleware\\": "tests/"
         }
     }
 }
