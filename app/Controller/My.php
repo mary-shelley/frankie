@@ -16,6 +16,6 @@ class My
      */
     public function act()
     {
-        return [];
+        return ["ok" => "json"];
     }
 }

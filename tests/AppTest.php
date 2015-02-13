@@ -11,127 +11,98 @@ use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Reader\HookReader as Reader;
 use Corley\Middleware\Annotations\After;
+use Acclimate\Container\CompositeContainer;
+use DI\ContainerBuilder;
+use Corley\Middleware\Loader\RouteAnnotationClassLoader;
+use Symfony\Component\Routing\RequestContext;
+use Corley\Middleware\Reader\HookReader;
+use Corley\Middleware\Executor\AnnotExecutor;
+use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\Routing\Matcher\UrlMatcher;
+use Corley\Middleware\App;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {
-    private $container;
-    private $router;
-    private $response;
+    private $app;
 
     public function setUp()
     {
-        $loader = require __DIR__.'/../vendor/autoload.php';
+        $loader = include __DIR__.'/../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
-        $this->container = $this->prophesize("DI\\Container");
-        $this->router = $this->prophesize("Symfony\\Component\\Routing\\Matcher\\UrlMatcher");
-        $this->response = new Response();
+        $container = new CompositeContainer();
+
+        $builder = new ContainerBuilder();
+        $builder->wrapContainer($container);
+        $diContainer = $builder->build();
+        $container->addContainer($diContainer);
+
+        $request = Request::createFromGlobals();
+        $response = new Response();
+
+        $reader = new AnnotationReader();
+
+        $routeLoader = new RouteAnnotationClassLoader($reader);
+        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__.'/../app']), $routeLoader);
+        $routes = $loader->load(__DIR__.'/../app');
+
+        $context = new RequestContext();
+        $context->fromRequest($request);
+        $matcher = new UrlMatcher($routes, $context);
+
+        $hookReader = new HookReader($reader);
+
+        $executor = new AnnotExecutor($container, $hookReader);
+
+        $this->app = new App($matcher, $executor);
     }
 
     public function testSimpleCorrectFlow()
     {
-        $this->markTestSkipped();
-        $this->router->matchRequest(Argument::Any())->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "test"]);
-
-        $this->container->get(Argument::Any())->willReturn(new Index());
-
-        $app = new App($this->container->reveal());
-        $app->setReader(new Reader(new AnnotationReader()));
-        $app->setRouter($this->router->reveal());
-
         $request = Request::create("/");
-        $app->run($request, $this->response);
+        $response = new Response();
+        $this->app->run($request, $response);
 
-        $this->assertEquals(200, $this->response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
     }
 
     public function test404ErrorPage()
     {
-        $this->markTestSkipped();
-        $this->router->matchRequest(Argument::Any())->willThrow("Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException");
+        $request = Request::create("/neverland");
+        $response = new Response();
+        $this->app->run($request, $response);
 
-        $app = new App($this->container->reveal());
-        $app->setReader(new Reader(new AnnotationReader()));
-        $app->setRouter($this->router->reveal());
-
-        $request = Request::create("/");
-        $app->run($request, $this->response);
-
-        $this->assertEquals(404, $this->response->getStatusCode());
+        $this->assertEquals(404, $response->getStatusCode());
     }
 
     public function testBeforeHookIsCalled()
     {
-        $this->markTestSkipped();
-        $this->router->matchRequest(Argument::Any())
-            ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "index"]);
-
-        $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->index(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->test(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-
-        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
-
         $request = Request::create("/");
+        $response = new Response();
+        $this->app->run($request, $response);
 
-        $app = new App($this->container->reveal());
-        $app->setReader(new Reader(new AnnotationReader()));
-        $app->setRouter($this->router->reveal());
-
-        $app->run($request, $this->response);
-
-        $this->assertEquals(200, $this->response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertJsonStringEqualsJsonString('{"test": "Ok"}', $response->getContent());
     }
 
     public function testBeforeHookIsACallChain()
     {
-        $this->markTestSkipped();
-        $this->router->matchRequest(Argument::Any())
-            ->willReturn(["controller" => "Corley\\Demo\\Controller\\Index", "action" => "far"]);
+        $request = Request::create("/far");
+        $response = new Response();
+        $this->app->run($request, $response);
 
-        $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->index(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->test(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->far(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-
-        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
-
-        $request = Request::create("/");
-
-        $app = new App($this->container->reveal());
-        $app->setReader(new Reader(new AnnotationReader()));
-        $app->setRouter($this->router->reveal());
-
-        $app->run($request, $this->response);
-
-        $this->assertEquals(200, $this->response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertJsonStringEqualsJsonString('{"test": "Ok"}', $response->getContent());
     }
 
     public function testBeforeHookIsACallChainOverClasses()
     {
-        $this->markTestSkipped();
-        $this->router->matchRequest(Argument::Any())
-            ->willReturn(["controller" => "Corley\\Demo\\Controller\\My", "action" => "act"]);
+        $request = Request::create("/act");
+        $response = new Response();
+        $this->app->run($request, $response);
 
-        $index = $this->prophesize('Corley\\Demo\\Controller\\Index');
-        $index->index(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->test(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-        $index->far(Argument::Any(), Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-
-        $far = $this->prophesize('Corley\\Demo\\Controller\\My');
-        $far->act(Argument::Any(), Argument::Any())->shouldBeCalledTimes(1);
-
-        $this->container->get("Corley\\Demo\\Controller\\My")->willReturn($far->reveal());
-        $this->container->get("Corley\\Demo\\Controller\\Index")->willReturn($index->reveal());
-
-        $request = Request::create("/");
-
-        $app = new App($this->container->reveal());
-        $app->setReader(new Reader(new AnnotationReader()));
-        $app->setRouter($this->router->reveal());
-
-        $app->run($request, $this->response);
-
-        $this->assertEquals(200, $this->response->getStatusCode());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertJsonStringEqualsJsonString('{"ok":"json"}', $response->getContent());
     }
 }
