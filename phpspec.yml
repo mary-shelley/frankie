@@ -1,4 +1,0 @@
-suites:
-  frankie_suite:
-    namespace: Corley\Demo
-    psr4_prefix: Corley\Demo
