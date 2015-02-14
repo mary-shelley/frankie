@@ -20,8 +20,8 @@ AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 $container = new CompositeContainer();
 
 $builder = new ContainerBuilder();
-$builder->wrapContainer($container);
 $diContainer = $builder->build();
+
 $container->addContainer($diContainer);
 
 $request = Request::createFromGlobals();

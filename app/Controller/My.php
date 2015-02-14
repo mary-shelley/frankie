@@ -3,7 +3,7 @@ namespace Corley\Demo\Controller;
 
 use Corley\Middleware\Annotations\After;
 use Corley\Middleware\Annotations\Before;
-use Symfony\Component\Routing\Annotation\Route;
+use Corley\Middleware\Annotations\Route;
 
 /**
  * @Before(targetClass="Corley\Demo\Controller\Index", targetMethod="far")

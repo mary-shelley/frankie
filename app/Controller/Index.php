@@ -1,7 +1,7 @@
 <?php
 namespace Corley\Demo\Controller;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Corley\Middleware\Annotations\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
