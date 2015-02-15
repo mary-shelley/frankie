@@ -15,7 +15,7 @@ use Corley\Middleware\Executor\AnnotExecutor;
 use Corley\Middleware\App;
 use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
 use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\FilesystemCache as FileCache;
+use Doctrine\Common\Cache\ApcCache;
 
 class AppFactory
 {
@@ -37,28 +37,14 @@ class AppFactory
 
         $reader = new CachedReader(
             new AnnotationReader(),
-            new FileCache("/tmp"),
+            new ApcCache(),
             self::$DEBUG
         );
 
         $context = new RequestContext();
         $context->fromRequest($request);
 
-        $routeCacheFile = self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
-        if (!self::$DEBUG && !file_exists($routeCacheFile)) {
-            $routeLoader = new RouteAnnotationClassLoader($reader);
-            $loader = new AnnotationDirectoryLoader(new FileLocator([$sourceFolder]), $routeLoader);
-            $routes = $loader->load($sourceFolder);
-
-            $dumper = new PhpMatcherDumper($routes);
-            file_put_contents($routeCacheFile, $dumper->dump(["class" => self::ROUTE_CACHE_CLASS]));
-
-            $matcher = new UrlMatcher($routes, $context);
-        } else {
-            $routes = include self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
-            $className = self::ROUTE_CACHE_CLASS;
-            $matcher = new $className($context);
-        }
+        $matcher = self::createMatcher($sourceFolder, $reader, $context);
 
         $hookReader = new HookReader($reader);
 
@@ -67,5 +53,35 @@ class AppFactory
         $app = new App($matcher, $executor);
 
         return $app;
+    }
+
+    private static function createMatcher($sourceFolder, $reader, $context)
+    {
+        $matcher = null;
+        $routeCacheFile = self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
+        if (!self::$DEBUG) {
+            if (!file_exists($routeCacheFile)) {
+                $routeLoader = new RouteAnnotationClassLoader($reader);
+                $loader = new AnnotationDirectoryLoader(new FileLocator([$sourceFolder]), $routeLoader);
+                $routes = $loader->load($sourceFolder);
+
+                $dumper = new PhpMatcherDumper($routes);
+                file_put_contents($routeCacheFile, $dumper->dump(["class" => self::ROUTE_CACHE_CLASS]));
+
+                $matcher = new UrlMatcher($routes, $context);
+            } else {
+                $routes = include self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
+                $className = self::ROUTE_CACHE_CLASS;
+                $matcher = new $className($context);
+            }
+        } else {
+            $routeLoader = new RouteAnnotationClassLoader($reader);
+            $loader = new AnnotationDirectoryLoader(new FileLocator([$sourceFolder]), $routeLoader);
+            $routes = $loader->load($sourceFolder);
+
+            $matcher = new UrlMatcher($routes, $context);
+        }
+
+        return $matcher;
     }
 }
