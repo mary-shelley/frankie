@@ -13,6 +13,7 @@ AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 $container = new CompositeContainer();
 
 $builder = new ContainerBuilder();
+$builder->setDefinitionCache(new Doctrine\Common\Cache\ApcCache());
 $diContainer = $builder->build();
 
 $container->addContainer($diContainer);
@@ -20,6 +21,8 @@ $container->addContainer($diContainer);
 $request = Request::createFromGlobals();
 $response = new Response();
 
+AppFactory::$DEBUG = false;
+AppFactory::$CACHE_FOLDER = "/tmp";
 $app = AppFactory::createApp(__DIR__.'/../app', $container, $request, $response);
 $response = $app->run($request, $response);
 $response->send();

@@ -13,9 +13,19 @@ use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Corley\Middleware\Reader\HookReader;
 use Corley\Middleware\Executor\AnnotExecutor;
 use Corley\Middleware\App;
+use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
+use Doctrine\Common\Annotations\CachedReader;
+use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\FilesystemCache as FileCache;
 
 class AppFactory
 {
+    public static $DEBUG = false;
+    public static $CACHE_FOLDER = "/tmp";
+
+    const ROUTE_CACHE_CLASS = "CachedUrlMatcher";
+    const ROUTE_CACHE_FILE = "bootstrap.routes.cache.php";
+
     public static function createApp($sourceFolder, Container $container, Request $request = null, Response $response = null)
     {
         if (!$request) {
@@ -26,15 +36,30 @@ class AppFactory
             $response = new Response();
         }
 
-        $reader = new AnnotationReader();
-
-        $routeLoader = new RouteAnnotationClassLoader($reader);
-        $loader = new AnnotationDirectoryLoader(new FileLocator([$sourceFolder]), $routeLoader);
-        $routes = $loader->load($sourceFolder);
+        $reader = new CachedReader(
+            new AnnotationReader(),
+            new FileCache("/tmp"),
+            self::$DEBUG
+        );
 
         $context = new RequestContext();
         $context->fromRequest($request);
-        $matcher = new UrlMatcher($routes, $context);
+
+        $routeCacheFile = self::$CACHE_FOLDER . "/" . self::ROUTE_CACHE_FILE;
+        if (!self::$DEBUG && !file_exists($routeCacheFile))  {
+            $routeLoader = new RouteAnnotationClassLoader($reader);
+            $loader = new AnnotationDirectoryLoader(new FileLocator([$sourceFolder]), $routeLoader);
+            $routes = $loader->load($sourceFolder);
+
+            $dumper = new PhpMatcherDumper($routes);
+            file_put_contents($routeCacheFile, $dumper->dump(["class" => self::ROUTE_CACHE_CLASS]));
+
+            $matcher = new UrlMatcher($routes, $context);
+        } else {
+            $routes = include self::$CACHE_FOLDER . "/" . self::ROUTE_CACHE_FILE;
+            $className = self::ROUTE_CACHE_CLASS;
+            $matcher = new $className($context);
+        }
 
         $hookReader = new HookReader($reader);
 

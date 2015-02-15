@@ -4,6 +4,8 @@
     "require": {
         "acclimate/container": "~1",
         "doctrine/annotations": "~1.2",
+        "doctrine/cache": "~1.4",
+        "doctrine/common": "~2.4",
         "mnapoli/php-di": "~4.0",
         "symfony/routing": "~2.6",
         "symfony/http-foundation": "~2.6",

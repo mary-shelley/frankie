@@ -6,12 +6,13 @@ use ReflectionMethod;
 use Corley\Middleware\Annotations\After;
 use Corley\Middleware\Annotations\Before;
 use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\Reader;
 
 class HookReader
 {
     private $reader;
 
-    public function __construct(AnnotationReader $reader)
+    public function __construct(Reader $reader)
     {
         $this->reader = $reader;
     }
