@@ -47,6 +47,16 @@ class Index
     }
 
     /**
+     * @Route("/param/{one}/param/{two}")
+     * @Before(targetClass="Corley\Demo\Controller\Index", targetMethod="index")
+     * @After(targetClass="Corley\Demo\Controller\Index", targetMethod="toJson")
+     */
+    public function param($request, $response, $one, $two)
+    {
+        return ["one" => $one, "two" => $two];
+    }
+
+    /**
      * @Route("/step")
      * @After(targetClass="Corley\Demo\Controller\Index", targetMethod="toJson")
      */

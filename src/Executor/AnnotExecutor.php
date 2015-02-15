@@ -1,12 +1,8 @@
 <?php
 namespace Corley\Middleware\Executor;
 
-use ReflectionClass;
-use ReflectionMethod;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Corley\Middleware\Reader\HookReader;
 use Corley\Middleware\Annotations\Before;
 use Corley\Middleware\Annotations\After;
@@ -33,9 +29,10 @@ class AnnotExecutor
         $action     = $matched["action"];
         $controller = $matched["controller"];
 
-        $this->executeActionsFor($controller, $action, Before::class);
+        $this->executeActionsFor($controller, $action, Before::class, $matched);
         $controller = $this->getContainer()->get($controller);
-        $actionReturn = call_user_func_array([$controller, $action], [$request, $response]);
+        $data = array_diff_key($matched, array_flip(["annotation", "_route", "controller", "action"]));
+        $actionReturn = call_user_func_array([$controller, $action], array_merge([$request, $response], $data));
         $this->executeActionsFor($controller, $action, After::class, $actionReturn);
     }
 
@@ -48,7 +45,7 @@ class AnnotExecutor
         $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data);
     }
 
-    private function executeSteps(array $annotations, Callable $method, $filterClass, $data = null)
+    private function executeSteps(array $annotations, callable $method, $filterClass, $data = null)
     {
         foreach ($annotations as $annotation) {
             $method($annotation->targetClass, $annotation->targetMethod, $filterClass, $data);
@@ -58,7 +55,6 @@ class AnnotExecutor
             ]);
         }
     }
-
 
     public function getContainer()
     {

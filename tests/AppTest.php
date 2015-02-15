@@ -101,4 +101,14 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertJsonStringEqualsJsonString('{"ok":"json"}', $response->getContent());
     }
+
+    public function testParametersArePassedToMethod()
+    {
+        $request = Request::create("/param/325/param/327");
+        $response = new Response();
+        $this->app->run($request, $response);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertJsonStringEqualsJsonString('{"one": 325, "two": 327}', $response->getContent());
+    }
 }
