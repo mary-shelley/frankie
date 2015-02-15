@@ -38,9 +38,6 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $diContainer = $builder->build();
         $container->addContainer($diContainer);
 
-        $request = Request::createFromGlobals();
-        $response = new Response();
-
         $reader = new AnnotationReader();
 
         $routeLoader = new RouteAnnotationClassLoader($reader);
@@ -48,7 +45,6 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $routes = $loader->load(__DIR__.'/../app');
 
         $context = new RequestContext();
-        $context->fromRequest($request);
         $matcher = new UrlMatcher($routes, $context);
 
         $hookReader = new HookReader($reader);
