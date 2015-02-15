@@ -5,7 +5,6 @@ use ReflectionClass;
 use ReflectionMethod;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-
 use Corley\Middleware\Annotations as Corley;
 
 /**
@@ -18,7 +17,6 @@ class Sut
      */
     public function method()
     {
-
     }
 
     /**
@@ -27,7 +25,6 @@ class Sut
      */
     public function multi()
     {
-
     }
 }
 
@@ -37,7 +34,7 @@ class AnnotationsTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $loader = require __DIR__ . '/../vendor/autoload.php';
+        $loader = require __DIR__.'/../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
         $this->reader = new AnnotationReader();

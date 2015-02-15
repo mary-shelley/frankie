@@ -6,7 +6,6 @@ use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\Routing\Route;
 
-
 class RouteAnnotationClassLoader extends AnnotationClassLoader
 {
     protected function configureRoute(Route $route, ReflectionClass $class, ReflectionMethod $method, $annot)
@@ -15,4 +14,3 @@ class RouteAnnotationClassLoader extends AnnotationClassLoader
         $route->setDefaults($defaults);
     }
 }
-

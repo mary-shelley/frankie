@@ -36,8 +36,11 @@ class DicTest extends \PHPUnit_Framework_TestCase
 
 // Support test classes...
 
-class MyClass {}
-class OtherClass {
+class MyClass
+{
+}
+class OtherClass
+{
     /**
      * @Inject
      * @var Corley\Middleware\MyClass
@@ -63,4 +66,3 @@ class OverTrait
 {
     use Classable;
 }
-

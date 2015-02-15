@@ -2,7 +2,6 @@
 namespace Corley\Middleware;
 
 use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
-use Symfony\Component\Routing\Loader\PhpFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -14,7 +13,7 @@ class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $loader = require __DIR__ . '/../vendor/autoload.php';
+        $loader = require __DIR__.'/../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
         $reader = new AnnotationReader();
 
@@ -23,8 +22,8 @@ class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
 
     public function testCollectRoutes()
     {
-        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__ . "/Stub"]), $this->annotClassLoader);
-        $collections = $loader->load(__DIR__ . '/Stub');
+        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__."/Stub"]), $this->annotClassLoader);
+        $collections = $loader->load(__DIR__.'/Stub');
 
         $this->assertCount(1, $collections);
         $collections = $collections->all();
@@ -33,4 +32,3 @@ class RouteAnnotationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Corley\\Middleware\\Stub\\Sut", $route->getDefaults()["controller"]);
     }
 }
-

@@ -1,11 +1,8 @@
 <?php
 namespace Corley\Middleware\Reader;
 
-use ReflectionMethod;
-use ReflectionClass;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Corley\Middleware\Reader\HookReader;
 use Corley\Middleware\Annotations\Before;
 use Corley\Middleware\Annotations\After;
 
@@ -15,7 +12,7 @@ class HookReaderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $loader = require __DIR__ . '/../../vendor/autoload.php';
+        $loader = require __DIR__.'/../../vendor/autoload.php';
         AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 
         $this->sut = new HookReader(new AnnotationReader());

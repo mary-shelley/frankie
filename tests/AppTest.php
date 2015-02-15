@@ -4,13 +4,9 @@ namespace Corley\Middleware;
 use DI\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Corley\Demo\Controller\Index;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
-use Prophecy\Argument;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Reader\HookReader as Reader;
-use Corley\Middleware\Annotations\After;
 use Acclimate\Container\CompositeContainer;
 use DI\ContainerBuilder;
 use Corley\Middleware\Loader\RouteAnnotationClassLoader;
@@ -20,7 +16,6 @@ use Corley\Middleware\Executor\AnnotExecutor;
 use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
-use Corley\Middleware\App;
 
 class AppTest extends \PHPUnit_Framework_TestCase
 {

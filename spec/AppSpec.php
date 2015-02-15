@@ -16,28 +16,26 @@ class AppSpec extends ObjectBehavior
         $this->beConstructedWith($matcher, $executor);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType('Corley\Middleware\App');
     }
 
-    function it_should_execute_matched_route(
+    public function it_should_execute_matched_route(
         UrlMatcher $matcher, AnnotExecutor $executor,
         Request $request, Response $response
-    )
-    {
+    ) {
         $matched = ["controller" => "A", "action" => "B"];
         $matcher->matchRequest(Argument::Any())->willReturn($matched);
         $executor->execute(Argument::Any(), Argument::Any(), $matched)->shouldBeCalledTimes(1);
 
-        $this->run($request, $response)->shouldBe($response);;
+        $this->run($request, $response)->shouldBe($response);
     }
 
-    function it_should_capture_missing_controller_errors_as_page_not_found(
+    public function it_should_capture_missing_controller_errors_as_page_not_found(
         UrlMatcher $matcher, AnnotExecutor $executor,
         Request $request, Response $response
-    )
-    {
+    ) {
         $matcher->matchRequest(Argument::Any())
             ->willThrow("Symfony\\Component\\Routing\\Exception\\ResourceNotFoundException");
 
@@ -46,11 +44,10 @@ class AppSpec extends ObjectBehavior
         $this->run($request, $response)->shouldBe($response);
     }
 
-    function it_should_capture_any_kind_of_error_as_internal_server_error(
+    public function it_should_capture_any_kind_of_error_as_internal_server_error(
         UrlMatcher $matcher, AnnotExecutor $executor,
         Request $request, Response $response
-    )
-    {
+    ) {
         $matcher->matchRequest(Argument::Any())
             ->willThrow("Exception");
 

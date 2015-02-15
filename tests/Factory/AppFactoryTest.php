@@ -17,4 +17,3 @@ class AppFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("Corley\\Middleware\\App", $app);
     }
 }
-

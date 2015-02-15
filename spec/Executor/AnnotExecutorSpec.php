@@ -13,21 +13,20 @@ use Corley\Middleware\Annotations\Before;
 
 class AnnotExecutorSpec extends ObjectBehavior
 {
-    function let(ContainerInterface $container, HookReader $reader)
+    public function let(ContainerInterface $container, HookReader $reader)
     {
         $this->beConstructedWith($container, $reader);
     }
 
-    function it_is_initializable()
+    public function it_is_initializable()
     {
         $this->shouldHaveType('Corley\Middleware\Executor\AnnotExecutor');
     }
 
-    function it_should_execute_just_the_action(
+    public function it_should_execute_just_the_action(
         ContainerInterface $container, HookReader $reader,
         Request $request, Response $response, Index $controller
-    )
-    {
+    ) {
         $container->get("Corley\\Demo\\Controller\\Index")->willReturn($controller);
 
         $reader->getMethodAnnotationsFor(Argument::Any(), Argument::Any(), Argument::Any())->willReturn([]);
@@ -42,19 +41,18 @@ class AnnotExecutorSpec extends ObjectBehavior
         $this->execute($request, $response, $matched);
     }
 
-    function it_should_execute_the_action_and_before_steps_for_methods(
+    public function it_should_execute_the_action_and_before_steps_for_methods(
         ContainerInterface $container, HookReader $reader,
         Request $request, Response $response, Index $controller
-    )
-    {
+    ) {
         $container->get("Corley\\Demo\\Controller\\Index")->willReturn($controller);
 
         $reader->getMethodAnnotationsFor(Argument::Any(), "index", Before::class)
             ->willReturn([
-                (object)[
+                (object) [
                     "targetClass" => "Corley\\Demo\\Controller\\Index",
                     "targetMethod" => "far",
-                ]
+                ],
             ]);
         $reader->getMethodAnnotationsFor(Argument::Any(), Argument::Any(), Argument::Any())->willReturn([]);
         $reader->getClassAnnotationsFor(Argument::Any(), Argument::Any())->willReturn([]);

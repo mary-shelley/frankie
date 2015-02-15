@@ -15,7 +15,6 @@ use Corley\Middleware\Executor\AnnotExecutor;
 use Corley\Middleware\App;
 use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
 use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\ApcCache;
 use Doctrine\Common\Cache\FilesystemCache as FileCache;
 
 class AppFactory
@@ -45,8 +44,8 @@ class AppFactory
         $context = new RequestContext();
         $context->fromRequest($request);
 
-        $routeCacheFile = self::$CACHE_FOLDER . "/" . self::ROUTE_CACHE_FILE;
-        if (!self::$DEBUG && !file_exists($routeCacheFile))  {
+        $routeCacheFile = self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
+        if (!self::$DEBUG && !file_exists($routeCacheFile)) {
             $routeLoader = new RouteAnnotationClassLoader($reader);
             $loader = new AnnotationDirectoryLoader(new FileLocator([$sourceFolder]), $routeLoader);
             $routes = $loader->load($sourceFolder);
@@ -56,7 +55,7 @@ class AppFactory
 
             $matcher = new UrlMatcher($routes, $context);
         } else {
-            $routes = include self::$CACHE_FOLDER . "/" . self::ROUTE_CACHE_FILE;
+            $routes = include self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
             $className = self::ROUTE_CACHE_CLASS;
             $matcher = new $className($context);
         }

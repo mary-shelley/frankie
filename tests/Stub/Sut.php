@@ -10,7 +10,5 @@ class Sut
      */
     public function anAction()
     {
-
     }
 }
-
