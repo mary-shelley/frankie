@@ -1,5 +1,7 @@
 # Frankie - A frankenstein micro-framework for PHP
 
+ * Develop: [![Build Status](https://travis-ci.org/wdalmut/frankie.svg?branch=develop)](https://travis-ci.org/wdalmut/frankie)
+
 The goal is focus on actions and attach before and action events using
 annotations
 
@@ -29,7 +31,7 @@ class MyController
 
 The goal is enforce the testing practices using SpecBDD approach.
 
-```
+```php
 <?php
 
 namespace spec;
@@ -52,7 +54,9 @@ class MyControllerSpec extends ObjectBehavior
         $this->shouldHaveType('MyController');
     }
 
-    function it_should_trigger_the_mark_event(Request $request, Response $response, EventManager $em)
+    function it_should_trigger_the_mark_event(
+        Request $request, Response $response, EventManager $em
+    )
     {
         $em->trigger("mark-it", Argument::Any())->shouldBeCalledTimes(1);
 
