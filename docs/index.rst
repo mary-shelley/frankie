@@ -50,7 +50,7 @@ like: authentication, serializers etc? Simple, defining steps:
     class IndexController
     {
         /**
-         * @Before(targetClass="MyClass", targetMethod="myMethod")
+         * @Before(targetClass="MyClass", targetMethod="aMethod")
          * @Route("/", methods={"GET"})
          */
         public function indexAction(Request $request, Response $response) { /** code */ }
