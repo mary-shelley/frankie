@@ -44,13 +44,13 @@ like: authentication, serializers etc? Simple, defining steps:
 
     <?php
     /**
-     * @Before(targetClass="AnyClass", targetMethod="anyMethod")
+     * @Before(targetClass="HttpAuth", targetMethod="basic")
      * @After(targetClass="Serializer", targetMethod="jsonify")
      */
     class IndexController
     {
         /**
-         * @Before(targetClass="MyClass", targetMethod="basic")
+         * @Before(targetClass="MyClass", targetMethod="myMethod")
          * @Route("/", methods={"GET"})
          */
         public function indexAction(Request $request, Response $response) { /** code */ }
@@ -59,8 +59,8 @@ like: authentication, serializers etc? Simple, defining steps:
 The framework uses extensively annotations in order to execute any other
 required step, in this case the flow is:
 
- * MyClass::basic
- * AnyClass::anyMethod
+ * HttpAuth::basic
+ * MyClass::myMethod
  * IndexController::indexAction
  * Serializer::jsonify
 

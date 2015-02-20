@@ -29,11 +29,11 @@ definitions.
 
 The flow that Frankie executes is:
 
- 1. ClassD::methodD
- 2. ClassB::methodB
- 3. MyClass::action
- 4. ClassE::methodE
- 5. ClassC::methodC
+ * ClassB::methodB
+ * ClassD::methodD
+ * MyClass::action
+ * ClassE::methodE
+ * ClassC::methodC
 
 Of course you can have different Before and After steps for every step that
 you execute and you can have more Before and After per method/class definition.
@@ -64,19 +64,21 @@ you execute and you can have more Before and After per method/class definition.
          * @Before(targetClass="ClassH", targetMethod="methodH")
          * @Before(targetClass="ClassI", targetMethod="methodI")
          */
-        public function action() { }
+        public function methodG() { }
     }
 
 In this case:
 
- 1. ClassD::methodD
- 2. ClassH::methodH
- 3. ClassI::methodI
- 4. ClassG::methodG
- 5. ClassB::methodB
- 6. MyClass::action
- 7. ClassE::methodE
- 8. ClassC::methodC
+ * ClassF::methodF
+ * ClassB::methodB
+ * ClassG::methodG
+ * ClassH::methodH
+ * ClassI::methodI
+ * ClassD::methodD
+ * MyClass::action
+ * ClassE::methodE
+ * ClassC::methodC
+
 
 Definitions
 -----------
