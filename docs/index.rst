@@ -10,7 +10,7 @@ Frankie is a Frankenstein framework just because uses different base components
 from other open-source projects like: PHP-Di, Symfony Routing, Doctrine
 Annotations, Symfony HTTP Foundation and of course your other libraries!
 
-Mainly it belives on a middleware approach in this way
+Mainly it believes on a middleware approach in this way
 
 .. code-block:: php
 
