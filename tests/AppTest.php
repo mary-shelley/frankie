@@ -167,4 +167,18 @@ Corley\\Demo\\Controller\\Tests\\Four::methodB
 EOF
         ,$content);
     }
+
+    public function testExceptionHandling()
+    {
+        $request = Request::create("/nowhere");
+        $response = new Response();
+
+        $count = 0;
+        $this->app->setErrorHandler(function() use (&$count) {
+            $count++;
+        });
+        $this->app->run($request, $response);
+
+        $this->assertSame(1, $count);
+    }
 }
