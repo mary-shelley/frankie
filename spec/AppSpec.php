@@ -27,7 +27,9 @@ class AppSpec extends ObjectBehavior
     ) {
         $matched = ["controller" => "A", "action" => "B"];
         $matcher->matchRequest(Argument::Any())->willReturn($matched);
-        $executor->execute(Argument::Any(), Argument::Any(), $matched)->shouldBeCalledTimes(1);
+        $executor->execute(Argument::Any(), Argument::Any(), $matched)
+            ->willReturn($response)
+            ->shouldBeCalledTimes(1);
 
         $this->run($request, $response)->shouldBe($response);
     }

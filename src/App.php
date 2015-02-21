@@ -28,7 +28,7 @@ class App
 
         try {
             $matched = $this->getRouter()->matchRequest($request);
-            $this->getExecutor()->execute($request, $response, $matched);
+            $response = $this->getExecutor()->execute($request, $response, $matched);
         } catch (ResourceNotFoundException $e) {
             $response->setStatusCode(404);
             call_user_func_array($this->errorHandler, [$request, $response, $e]);
