@@ -36,8 +36,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $reader = new AnnotationReader();
 
         $routeLoader = new RouteAnnotationClassLoader($reader);
-        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__.'/../app']), $routeLoader);
-        $routes = $loader->load(__DIR__.'/../app');
+        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__.'/app']), $routeLoader);
+        $routes = $loader->load(__DIR__.'/app');
 
         $context = new RequestContext();
         $matcher = new UrlMatcher($routes, $context);
@@ -105,5 +105,130 @@ class AppTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertJsonStringEqualsJsonString('{"one": 325, "two": 327}', $response->getContent());
+    }
+
+    public function testEventsFlow()
+    {
+        $request = Request::create("/base-flow");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Two::methodB
+Corley\\Demo\\Controller\\Tests\\One::methodC
+Corley\\Demo\\Controller\\Tests\\One::action
+
+EOF
+        ,$content);
+    }
+
+    public function testAfterEventsFlow()
+    {
+        $request = Request::create("/after-flow");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Three::action
+Corley\\Demo\\Controller\\Tests\\Three::methodC
+Corley\\Demo\\Controller\\Tests\\Four::methodB
+
+EOF
+        ,$content);
+    }
+
+    public function testCicleEventsFlow()
+    {
+        $request = Request::create("/flow");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Two::methodB
+Corley\\Demo\\Controller\\Tests\\One::methodC
+Corley\\Demo\\Controller\\Tests\\One::action
+Corley\\Demo\\Controller\\Tests\\Five::action
+Corley\\Demo\\Controller\\Tests\\Three::action
+Corley\\Demo\\Controller\\Tests\\Three::methodC
+Corley\\Demo\\Controller\\Tests\\Four::methodB
+
+EOF
+        ,$content);
+    }
+
+    public function testExceptionHandling()
+    {
+        $request = Request::create("/nowhere");
+        $response = new Response();
+
+        $count = 0;
+        $this->app->setErrorHandler(function() use (&$count) {
+            $count++;
+        });
+        $this->app->run($request, $response);
+
+        $this->assertSame(1, $count);
+    }
+
+    public function testFlowShortCircuitOnResponse()
+    {
+        $request = Request::create("/deny");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $content);
+    }
+
+    public function testShortCircuitOnActions()
+    {
+        $request = Request::create("/close-direct");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(202, $response->getStatusCode());
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Seven::action
+
+EOF
+, $content);
+    }
+
+    public function testShortCircuitDuringAfterSteps()
+    {
+        $request = Request::create("/close-after");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Seven::pass
+
+EOF
+, $content);
     }
 }
