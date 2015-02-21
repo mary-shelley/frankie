@@ -7,6 +7,6 @@ suites:
   frankie_suite:
     namespace: Corley\Demo
     psr4_prefix: Corley\Demo
-    src_path: 'app'
-    spec_path: 'app'
+    src_path: 'tests/app'
+    spec_path: 'tests/app'
     spec_prefix: ''
