@@ -37,5 +37,34 @@ Of course you can reuse the application response
         }
     }
 
-This procedure can be applied to any step of action.
+This procedure can be applied to any step or action.
 
+Inheritance on Responses
+------------------------
+
+If you image to extends the Response class in order to obtain different
+definitions like:
+
+.. code-block:: php
+
+    <?php
+    class ApiProblem extends Response
+    {
+        public function __construct($statusCode, $content = "") {...}
+    }
+
+You can use as
+
+.. code-block:: php
+
+    <?php
+    class HttpAuth
+    {
+        public function basic()
+        {
+            // failed authorization
+            return new ApiProblem(401, "Unauthorized!");
+        }
+    }
+
+That's more interesting!

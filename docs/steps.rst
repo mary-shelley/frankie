@@ -79,4 +79,51 @@ In this case:
  * ClassE::methodE
  * ClassC::methodC
 
+Steps parameters
+----------------
+
+Before steps can use the matched array as third parameter
+
+.. code-block:: php
+
+    <?php
+    class Hook
+    {
+        public function beforeStep(Request $request, Response $response, array $matched)
+        {
+
+        }
+    }
+
+After steps instead access to the action response as third parameter
+
+.. code-block:: php
+
+    <?php
+    class Hook
+    {
+        public function afterStep(Request $request, Response $response, $data = null)
+        {
+
+        }
+    }
+
+Dependency Injection Container
+------------------------------
+
+All steps and actions are resolved by the dependency injection container. That
+means that we can inject or preapre all of our steps without problems thanks to
+our DiC.
+
+.. code-block:: php
+
+    <?php
+    class Hook
+    {
+        /**
+         * @Inject
+         * @var Zend\Db\Adapter\Adapter;
+         */
+        $db;
+    }
 
