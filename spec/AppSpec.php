@@ -11,17 +11,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AppSpec extends ObjectBehavior
 {
-    public function let(UrlMatcher $matcher, AnnotExecutor $executor)
+    function let(UrlMatcher $matcher, AnnotExecutor $executor)
     {
         $this->beConstructedWith($matcher, $executor);
     }
 
-    public function it_is_initializable()
+    function it_is_initializable()
     {
         $this->shouldHaveType('Corley\Middleware\App');
     }
 
-    public function it_should_execute_matched_route(
+    function it_should_execute_matched_route(
         UrlMatcher $matcher, AnnotExecutor $executor,
         Request $request, Response $response
     ) {
@@ -32,7 +32,7 @@ class AppSpec extends ObjectBehavior
         $this->run($request, $response)->shouldBe($response);
     }
 
-    public function it_should_capture_missing_controller_errors_as_page_not_found(
+    function it_should_capture_missing_controller_errors_as_page_not_found(
         UrlMatcher $matcher, AnnotExecutor $executor,
         Request $request, Response $response
     ) {
@@ -44,7 +44,7 @@ class AppSpec extends ObjectBehavior
         $this->run($request, $response)->shouldBe($response);
     }
 
-    public function it_should_capture_any_kind_of_error_as_internal_server_error(
+    function it_should_capture_any_kind_of_error_as_internal_server_error(
         UrlMatcher $matcher, AnnotExecutor $executor,
         Request $request, Response $response
     ) {
