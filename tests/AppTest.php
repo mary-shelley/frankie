@@ -181,4 +181,54 @@ EOF
 
         $this->assertSame(1, $count);
     }
+
+    public function testFlowShortCircuitOnResponse()
+    {
+        $request = Request::create("/deny");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $content);
+    }
+
+    public function testShortCircuitOnActions()
+    {
+        $request = Request::create("/close-direct");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(202, $response->getStatusCode());
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Seven::action
+
+EOF
+, $content);
+    }
+
+    public function testShortCircuitDuringAfterSteps()
+    {
+        $request = Request::create("/close-after");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Seven::pass
+
+EOF
+, $content);
+    }
 }
