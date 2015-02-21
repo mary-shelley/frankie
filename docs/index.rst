@@ -153,6 +153,7 @@ Contents:
    getting-started
    steps
    di
+   shortcuts
 
 
 
