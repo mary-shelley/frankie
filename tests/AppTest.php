@@ -36,8 +36,8 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $reader = new AnnotationReader();
 
         $routeLoader = new RouteAnnotationClassLoader($reader);
-        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__.'/../app']), $routeLoader);
-        $routes = $loader->load(__DIR__.'/../app');
+        $loader = new AnnotationDirectoryLoader(new FileLocator([__DIR__.'/app']), $routeLoader);
+        $routes = $loader->load(__DIR__.'/app');
 
         $context = new RequestContext();
         $matcher = new UrlMatcher($routes, $context);
