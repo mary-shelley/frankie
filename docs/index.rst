@@ -152,6 +152,7 @@ Contents:
 
    getting-started
    steps
+   di
 
 
 
