@@ -106,4 +106,65 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertJsonStringEqualsJsonString('{"one": 325, "two": 327}', $response->getContent());
     }
+
+    public function testEventsFlow()
+    {
+        $request = Request::create("/base-flow");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Two::methodB
+Corley\\Demo\\Controller\\Tests\\One::methodC
+Corley\\Demo\\Controller\\Tests\\One::action
+
+EOF
+        ,$content);
+    }
+
+    public function testAfterEventsFlow()
+    {
+        $request = Request::create("/after-flow");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Three::action
+Corley\\Demo\\Controller\\Tests\\Three::methodC
+Corley\\Demo\\Controller\\Tests\\Four::methodB
+
+EOF
+        ,$content);
+    }
+
+    public function testCicleEventsFlow()
+    {
+        $request = Request::create("/flow");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Two::methodB
+Corley\\Demo\\Controller\\Tests\\One::methodC
+Corley\\Demo\\Controller\\Tests\\One::action
+Corley\\Demo\\Controller\\Tests\\Five::action
+Corley\\Demo\\Controller\\Tests\\Three::action
+Corley\\Demo\\Controller\\Tests\\Three::methodC
+Corley\\Demo\\Controller\\Tests\\Four::methodB
+
+EOF
+        ,$content);
+    }
 }
