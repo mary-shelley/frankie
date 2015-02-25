@@ -201,8 +201,8 @@ EOF
 Corley\\Demo\\Controller\\Tests\\Two::methodB
 Corley\\Demo\\Controller\\Tests\\Four::methodB
 Corley\\Demo\\Controller\\Tests\\Nine::action
-Corley\\Demo\\Controller\\Tests\\One::methodC
 Corley\\Demo\\Controller\\Tests\\Four::methodB
+Corley\\Demo\\Controller\\Tests\\One::methodC
 
 EOF
         ,$content);
