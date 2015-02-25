@@ -24,6 +24,21 @@ class HookReader
             });
     }
 
+    public function getInterfaceAnnotationsFor($clazz, $instanceOf)
+    {
+        $annots = [];
+        $refl = new ReflectionClass($clazz);
+        $interfaces = $refl->getInterfaces();
+
+        foreach ($interfaces as $interface) {
+            $annots =  array_merge($annots, array_filter($this->reader->getClassAnnotations($interface), function ($value) use ($instanceOf) {
+                return ($value instanceof $instanceOf) ? true : false;
+            }));
+        }
+
+        return $annots;
+    }
+
     public function getMethodAnnotationsFor($clazz, $method, $instanceOf)
     {
         $refl = new ReflectionMethod($clazz, $method);

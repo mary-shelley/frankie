@@ -54,6 +54,9 @@ class AnnotExecutor
         $methodAnnotations = $this->getReader()->getMethodAnnotationsFor($controller, $action, $filterClass);
         $this->executeSteps($methodAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
 
+        $classAnnotations = $this->getReader()->getInterfaceAnnotationsFor($controller, $filterClass);
+        $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
+
         $classAnnotations = $this->getReader()->getClassAnnotationsFor($controller, $filterClass);
         $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
     }

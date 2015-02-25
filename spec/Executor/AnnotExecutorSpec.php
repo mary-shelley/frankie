@@ -31,6 +31,7 @@ class AnnotExecutorSpec extends ObjectBehavior
 
         $reader->getMethodAnnotationsFor(Argument::Any(), Argument::Any(), Argument::Any())->willReturn([]);
         $reader->getClassAnnotationsFor(Argument::Any(), Argument::Any())->willReturn([]);
+        $reader->getInterfaceAnnotationsFor(Argument::Any(), Argument::Any())->willReturn([]);
 
         $controller->index($request, $response)->shouldBeCalledTimes(1);
         $matched = [
@@ -56,6 +57,7 @@ class AnnotExecutorSpec extends ObjectBehavior
             ]);
         $reader->getMethodAnnotationsFor(Argument::Any(), Argument::Any(), Argument::Any())->willReturn([]);
         $reader->getClassAnnotationsFor(Argument::Any(), Argument::Any())->willReturn([]);
+        $reader->getInterfaceAnnotationsFor(Argument::Any(), Argument::Any())->willReturn([]);
 
         $controller->index($request, $response, Argument::Any())->shouldBeCalledTimes(1);
         $controller->far($request, $response, Argument::Any())->shouldBeCalledTimes(1);
