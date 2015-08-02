@@ -100,3 +100,23 @@ requirements
         public function method(Request $request, Response $response, $id) {}
     }
 
+Route prefix
+------------
+
+You can use the base class in order to create a default route path
+
+
+.. code-block:: php
+
+    <?php
+    /**
+     * @Route("/user")
+     */
+    class UserController
+    {
+        /** @Route("/{id}", methods={"GET"}, requirements={"id"="\d+"}) */
+        public function method(Request $request, Response $response, $id) {}
+    }
+
+The resulting action route match: `/user/12` for example
+
