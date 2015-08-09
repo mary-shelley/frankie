@@ -6,10 +6,10 @@
         "doctrine/annotations": "~1.2",
         "doctrine/cache": "~1.4",
         "doctrine/common": "~2.4",
-        "mnapoli/php-di": "~4.0",
-        "symfony/routing": "~2.6",
-        "symfony/http-foundation": "~2.6",
-        "symfony/config": "~2.6"
+        "php-di/php-di": "~5",
+        "symfony/routing": "2.8.x-dev",
+        "symfony/http-foundation": "~2",
+        "symfony/config": "~2"
     },
     "require-dev": {
         "zendframework/zend-eventmanager": "~2",
@@ -24,7 +24,8 @@
     "autoload-dev": {
         "psr-4": {
             "Corley\\Middleware\\": "tests/",
-            "Corley\\Demo\\": "tests/app/"
+            "Corley\\Demo\\": "tests/app/",
+            "Corley\\Demo56\\": "tests/app56/"
         }
     }
 }

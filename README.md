@@ -2,11 +2,30 @@
 
  * Develop: [![Build Status](https://travis-ci.org/wdalmut/frankie.svg?branch=develop)](https://travis-ci.org/wdalmut/frankie)
 
+## Features
+
+Frankie is a micro-framework focused on annotation. The goal is to use
+annotation in order to do almost everything in the framework.
+
+ * Annotated Routes (Routing)
+ * Annotated Injections (Dependencies)
+ * Annotated Request Flow (Application Flow)
+
+Mainly Frankie is a framework for create RESTful applications and microservices.
+
+Discover more on the [documentation](http://frankie.readthedocs.org/)
+
+## Hands-on!
+
 The goal is focus on actions and attach before and action events using
 annotations
 
 ```php
 <?php
+/**
+ * @Before(targetClass="HttpAuth", targetMethod="basic")
+ * @After(targetClass="Serializer", targetMethod="toJson")
+ */
 class MyController
 {
     /**
@@ -16,10 +35,12 @@ class MyController
     private $eventManager;
 
     /**
-     * @Route("/my/path", methods={"GET"})
+     * @Route("/my/path/{id}", methods={"GET"})
      * @Before(targetClass="MyHook\ThisOne", targetMethod="count")
+     * @Before(targetClass="Stopwatch", targetMethod="start")
+     * @After(targetClass="Stopwatch", targetMethod="stop")
      */
-    public function get(Request $request, Response $response)
+    public function get(Request $request, Response $response, $id)
     {
         // ...
         $this->eventManager->trigger("mark-it", $element);
@@ -29,7 +50,7 @@ class MyController
 
 ```
 
-The goal is enforce the testing practices using SpecBDD approach.
+### Testing with SpecBDD - PHPSpec
 
 ```php
 <?php
@@ -64,4 +85,5 @@ class MyControllerSpec extends ObjectBehavior
     }
 }
 ```
+
 

@@ -151,9 +151,12 @@ Contents:
    :maxdepth: 2
 
    getting-started
+   errors
    steps
+   routing
    di
    shortcuts
+   perf-tests
 
 
 
