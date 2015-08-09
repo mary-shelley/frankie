@@ -1,6 +1,6 @@
 # Frankie - A frankenstein micro-framework for PHP
 
- * Develop: [![Build Status](https://travis-ci.org/wdalmut/frankie.svg?branch=develop)](https://travis-ci.org/wdalmut/frankie)
+[![Build Status](https://travis-ci.org/wdalmut/frankie.svg?branch=master)](https://travis-ci.org/wdalmut/frankie)
 
 ## Features
 
