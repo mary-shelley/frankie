@@ -29,6 +29,7 @@ class AppTest extends \PHPUnit_Framework_TestCase
         $container = new CompositeContainer();
 
         $builder = new ContainerBuilder();
+        $builder->useAnnotations(true);
         $builder->wrapContainer($container);
         $diContainer = $builder->build();
         $container->addContainer($diContainer);
