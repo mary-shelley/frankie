@@ -10,13 +10,12 @@ class DicTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->builder = new ContainerBuilder();
+        $this->builder->useAutowiring(true);
+        $this->builder->useAnnotations(true);
     }
 
     public function testInjectWithAnnotations()
     {
-        $this->builder->useAutowiring(true);
-        $this->builder->useAnnotations(true);
-
         $container = $this->builder->build();
 
         $otherClass = $container->get("Corley\\Middleware\\OtherClass");
