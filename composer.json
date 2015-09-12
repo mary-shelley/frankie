@@ -7,7 +7,7 @@
         "doctrine/cache": "~1.4",
         "doctrine/common": "~2.4",
         "php-di/php-di": "~5",
-        "symfony/routing": "2.8.x-dev",
+        "symfony/routing": ">=2.7.4",
         "symfony/http-foundation": "~2",
         "symfony/config": "~2"
     },
