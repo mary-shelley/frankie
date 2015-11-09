@@ -15,7 +15,7 @@ use Corley\Middleware\Executor\AnnotExecutor;
 use Corley\Middleware\App;
 use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
 use Doctrine\Common\Annotations\CachedReader;
-use Doctrine\Common\Cache\ApcCache;
+use Doctrine\Common\Cache\FilesystemCache;
 
 class AppFactory
 {
@@ -37,7 +37,7 @@ class AppFactory
 
         $reader = new CachedReader(
             new AnnotationReader(),
-            new ApcCache(),
+            new FilesystemCache(self::$CACHE_FOLDER),
             self::$DEBUG
         );
 
