@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
 use Corley\Middleware\Executor\AnnotExecutor;
+use Symfony\Component\Routing\RequestContext;
 
 class App
 {
@@ -23,8 +24,9 @@ class App
 
     public function run(Request $request, Response $response)
     {
-        $this->request = $request;
-        $this->response = $response;
+        $requestContext = new RequestContext();
+        $requestContext = $requestContext->fromRequest($request);
+        $this->getRouter()->setContext($requestContext);
 
         try {
             $matched = $this->getRouter()->matchRequest($request);
