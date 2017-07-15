@@ -7,9 +7,9 @@
         "doctrine/cache": "~1.4",
         "doctrine/common": "~2.4",
         "php-di/php-di": "~5",
-        "symfony/routing": ">=2.7.4",
-        "symfony/http-foundation": "~2",
-        "symfony/config": "~2"
+        "symfony/routing": "~3",
+        "symfony/http-foundation": "~3",
+        "symfony/config": "~3"
     },
     "require-dev": {
         "zendframework/zend-eventmanager": "~2",
