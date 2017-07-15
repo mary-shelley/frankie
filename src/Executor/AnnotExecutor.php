@@ -54,8 +54,18 @@ class AnnotExecutor
         $methodAnnotations = $this->getReader()->getMethodAnnotationsFor($controller, $action, $filterClass);
         $this->executeSteps($methodAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
 
-        $classAnnotations = $this->getReader()->getClassAnnotationsFor($controller, $filterClass);
+        if ($after) {
+            $classAnnotations = $this->getReader()->getClassAnnotationsFor($controller, $filterClass);
+            $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
+        }
+
+        $classAnnotations = $this->getReader()->getInterfaceAnnotationsFor($controller, $filterClass);
         $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
+
+        if (!$after) {
+            $classAnnotations = $this->getReader()->getClassAnnotationsFor($controller, $filterClass);
+            $this->executeSteps($classAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
+        }
     }
 
     private function executeSteps(array $annotations, callable $method, $filterClass, $data = null, $after = false)

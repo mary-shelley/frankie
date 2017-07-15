@@ -169,6 +169,45 @@ EOF
         ,$content);
     }
 
+    public function testInterfaceEngagement()
+    {
+        $request = Request::create("/from-interface");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Two::methodB
+Corley\\Demo\\Controller\\Tests\\Eight::action
+Corley\\Demo\\Controller\\Tests\\One::methodC
+
+EOF
+        ,$content);
+    }
+    public function testEngagementClassesAndInterfaces()
+    {
+        $request = Request::create("/long-with-interface");
+        $response = new Response();
+
+        ob_start();
+        $this->app->run($request, $response);
+        $content = ob_get_contents();
+        ob_end_clean();
+
+        $this->assertEquals(<<<EOF
+Corley\\Demo\\Controller\\Tests\\Two::methodB
+Corley\\Demo\\Controller\\Tests\\Four::methodB
+Corley\\Demo\\Controller\\Tests\\Nine::action
+Corley\\Demo\\Controller\\Tests\\Four::methodB
+Corley\\Demo\\Controller\\Tests\\One::methodC
+
+EOF
+        ,$content);
+    }
+
     public function testExceptionHandling()
     {
         $request = Request::create("/nowhere");
