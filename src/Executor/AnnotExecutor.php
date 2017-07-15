@@ -33,14 +33,12 @@ class AnnotExecutor
         $controller = $matched["controller"];
 
         try {
-            $this->limiter = [];
             $this->executeActionsFor($controller, $action, Before::class, $matched, false);
 
             $controller = $this->getContainer()->get($controller);
             $data = array_diff_key($matched, array_flip(["annotation", "_route", "controller", "action"]));
             $actionReturn = $this->call([$controller, $action], array_merge([$request, $response], $data));
 
-            $this->limiter = [];
             $this->executeActionsFor($controller, $action, After::class, $actionReturn, true);
         } catch (ShortcutException $e) {
             $response = $e->getResponse();
@@ -51,6 +49,7 @@ class AnnotExecutor
 
     private function executeActionsFor($controller, $action, $filterClass, $data = null, $after = false)
     {
+        $this->limiter = [];
         $methodAnnotations = $this->getReader()->getMethodAnnotationsFor($controller, $action, $filterClass);
         $this->executeSteps($methodAnnotations, [$this, __FUNCTION__], $filterClass, $data, $after);
 
