@@ -2,3 +2,4 @@ vendor
 *.phar
 tags
 docs/_*
+composer.lock
