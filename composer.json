@@ -2,14 +2,15 @@
     "name": "wdalmut/frankie",
     "license": "MIT",
     "require": {
-        "acclimate/container": "~1",
-        "doctrine/annotations": "~1.2",
-        "doctrine/cache": "~1.4",
-        "doctrine/common": "~2.4",
+        "acclimate/container": "~2",
+        "doctrine/annotations": "~1",
+        "doctrine/cache": "~1",
+        "doctrine/common": "~2",
         "php-di/php-di": "~5",
         "symfony/routing": "~3",
         "symfony/http-foundation": "~3",
-        "symfony/config": "~3"
+        "symfony/config": "~3",
+        "psr/container": "~1"
     },
     "require-dev": {
         "zendframework/zend-eventmanager": "~2",
