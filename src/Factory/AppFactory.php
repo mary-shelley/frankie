@@ -2,8 +2,6 @@
 namespace Corley\Middleware\Factory;
 
 use Acclimate\Container\CompositeContainer as Container;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Corley\Middleware\Loader\RouteAnnotationClassLoader;
 use Symfony\Component\Routing\Loader\AnnotationDirectoryLoader;
@@ -25,29 +23,17 @@ class AppFactory
     const ROUTE_CACHE_CLASS = "CachedUrlMatcher";
     const ROUTE_CACHE_FILE = "bootstrap.routes.cache.php";
 
-    public static function createApp($sourceFolder, Container $container, Request $request = null, Response $response = null)
+    public static function createApp($sourceFolder, Container $container)
     {
-        if (!$request) {
-            $request = Request::createFromGlobals();
-        }
-
-        if (!$response) {
-            $response = new Response();
-        }
-
         $reader = new CachedReader(
             new AnnotationReader(),
             new FilesystemCache(self::$CACHE_FOLDER),
             self::$DEBUG
         );
 
-        $context = new RequestContext();
-        $context->fromRequest($request);
-
-        $matcher = self::createMatcher($sourceFolder, $reader, $context);
+        $matcher = self::createMatcher($sourceFolder, $reader);
 
         $hookReader = new HookReader($reader);
-
         $executor = new AnnotExecutor($container, $hookReader);
 
         $app = new App($matcher, $executor);
@@ -55,9 +41,10 @@ class AppFactory
         return $app;
     }
 
-    private static function createMatcher($sourceFolder, $reader, $context)
+    private static function createMatcher($sourceFolder, $reader)
     {
         $matcher = null;
+        $context = new RequestContext();
         $routeCacheFile = self::$CACHE_FOLDER."/".self::ROUTE_CACHE_FILE;
         if (!self::$DEBUG) {
             if (!file_exists($routeCacheFile)) {
