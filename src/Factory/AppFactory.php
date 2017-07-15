@@ -1,7 +1,6 @@
 <?php
 namespace Corley\Middleware\Factory;
 
-use Acclimate\Container\CompositeContainer as Container;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -16,6 +15,7 @@ use Corley\Middleware\App;
 use Symfony\Component\Routing\Matcher\Dumper\PhpMatcherDumper;
 use Doctrine\Common\Annotations\CachedReader;
 use Doctrine\Common\Cache\FilesystemCache;
+use Psr\Container\ContainerInterface;
 
 class AppFactory
 {
@@ -25,7 +25,7 @@ class AppFactory
     const ROUTE_CACHE_CLASS = "CachedUrlMatcher";
     const ROUTE_CACHE_FILE = "bootstrap.routes.cache.php";
 
-    public static function createApp($sourceFolder, Container $container, Request $request = null, Response $response = null)
+    public static function createApp($sourceFolder, ContainerInterface $container, Request $request = null, Response $response = null)
     {
         if (!$request) {
             $request = Request::createFromGlobals();

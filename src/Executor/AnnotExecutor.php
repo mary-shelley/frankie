@@ -6,8 +6,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Corley\Middleware\Reader\HookReader;
 use Corley\Middleware\Annotations\Before;
 use Corley\Middleware\Annotations\After;
-use Interop\Container\ContainerInterface;
 use Corley\Middleware\Exception\ShortcutException;
+use Psr\Container\ContainerInterface;
 
 class AnnotExecutor
 {
