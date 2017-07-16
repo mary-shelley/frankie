@@ -23,9 +23,6 @@ class App
 
     public function run(Request $request, Response $response)
     {
-        $this->request = $request;
-        $this->response = $response;
-
         try {
             $matched = $this->getRouter()->matchRequest($request);
             $response = $this->getExecutor()->execute($request, $response, $matched);
