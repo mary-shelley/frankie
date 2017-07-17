@@ -1,6 +1,6 @@
 # Frankie - A frankenstein micro-framework for PHP
 
-[![Build Status](https://travis-ci.org/wdalmut/frankie.svg?branch=master)](https://travis-ci.org/wdalmut/frankie)
+[![Build Status](https://travis-ci.org/mary-shelley/frankie.svg?branch=master)](https://travis-ci.org/mary-shelley/frankie)
 
 ## Features
 
@@ -13,7 +13,7 @@ annotation in order to do almost everything in the framework.
 
 Mainly Frankie is a framework for create RESTful applications and microservices.
 
-Discover more on the [documentation](http://frankie.readthedocs.org/)
+Discover more on the [documentation](https://mary-shelley.github.io/docs/)
 
 ## Hands-on!
 
